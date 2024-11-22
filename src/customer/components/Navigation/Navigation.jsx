@@ -31,8 +31,9 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Menu, MenuItem } from '@mui/material';
+import { Avatar, Button, Menu, MenuItem } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
+import { AuthModal } from '../../Auth/AuthModal';
 
 
 export default function Navigation() {
@@ -40,10 +41,17 @@ export default function Navigation() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   
+  const [openAuthModal,setOpenAuthModal] = useState(false);
+
   const handleClose = () => {
-    setAnchorEl(null); // Closes the menu
+    // setAnchorEl(null); // Closes the menu
+    setOpenAuthModal(false);
   };
   
+  const handleOpen = ()=>{
+    setOpenAuthModal(true);
+  }
+
   const handleMyOrderClick = () => {
    
    
@@ -302,14 +310,10 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {/* <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Sign in
-                  </a>
-                  <span aria-hidden="true" className="h-6 w-px bg-gray-200" />
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Create account
-                  </a> */}
-                  <Avatar
+                  
+                  {false ? (
+                    <div>
+                    <Avatar
                   className="text-white"
                   onClick={handleUserClick}
                   aria-controls={"basic-menu"}
@@ -344,7 +348,14 @@ export default function Navigation() {
                                My Orders
                         </MenuItem>
                         <MenuItem>Logout</MenuItem>
-                      </Menu>
+                      </Menu></div>) :( <Button onClick={handleOpen}
+                                                className='text-sm font-medium text-gray-700 hover:text-gray-800'
+                      
+                      >Sign in
+
+
+
+                      </Button>)}
                 </div>
 
                 <div className="hidden lg:ml-8 lg:flex">
@@ -383,6 +394,10 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
+
+      <AuthModal handleClose={handleClose} open={openAuthModal}>
+
+      </AuthModal>
     </div>
   )
 }
