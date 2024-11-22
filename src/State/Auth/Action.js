@@ -32,7 +32,7 @@ catch(error){
 
 const loginRequest = () =>({type:LOGIN_REQUEST});
 const loginSuccess = (user) =>({type:LOGIN_SUCCESS,payload:user});
-const loginFailure= () =>({type:LOGIN_FAILURE,payload:error});
+const loginFailure= (error) =>({type:LOGIN_FAILURE,payload:error});
 
 export const login = userData => async (dispatch)=>{
     
@@ -48,8 +48,8 @@ try{
     }
     dispatch(loginSuccess(user.jwt))
 }
-catch(e){
-    dispatch(loginFailure(e.message))
+catch(error){
+    dispatch(loginFailure(error.message))
 
 }
 
@@ -57,7 +57,7 @@ catch(e){
 
 const getUserRequest = () =>({type:GET_USER_REQUEST});
 const getUserSuccess = (user) =>({type:GET_USER_SUCCESS,payload:user});
-const getUserFailure= () =>({type:GET_USER_FAILURE,payload:error});
+const getUserFailure= (error) =>({type:GET_USER_FAILURE,payload:error});
 
 export const getUser = userData => async (dispatch)=>{
     
@@ -75,8 +75,8 @@ try{
 
     dispatch(getUserSuccess(user))
 }
-catch(e){
-    dispatch(getUserFailure(e.message))
+catch(error){
+    dispatch(getUserFailure(error.message))
 
 }
 
