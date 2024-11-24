@@ -19,8 +19,10 @@ export const RegisterForm = () => {
          dispatch(getUser(jwt));
       }
       
-  },[jwt])
+  },[jwt,auth.jwt])
 
+
+  
 
   const handleSubmit = (event) => {
 
