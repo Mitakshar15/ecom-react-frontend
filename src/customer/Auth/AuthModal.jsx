@@ -2,7 +2,7 @@ import { Box, Modal, Typography } from "@mui/material";
 import React from "react";
 import { RegisterForm } from "./RegisterForm";
 import { useLocation } from "react-router-dom";
-import { LoginForm } from "./LoginForm";
+import LoginForm from "./LoginForm";
 
 const style = {
   position: "absolute",
