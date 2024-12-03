@@ -45,7 +45,7 @@ export default function LoginForm({ handleNext }) {
               name="email"
               label="Email"
               fullWidth
-              autoComplete="email"
+              autoComplete="given-name"
             />
           </Grid>
           <Grid item xs={12}>

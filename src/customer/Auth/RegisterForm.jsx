@@ -60,7 +60,7 @@ export const RegisterForm = () => {
               name="lastName"
               label="Last Name"
               fullWidth
-              autoComplete="given-last-name"
+              autoComplete="given-name"
             />
           </Grid>
           <Grid item xs={12}>
@@ -70,7 +70,7 @@ export const RegisterForm = () => {
               name="email"
               label="Email"
               fullWidth
-              autoComplete="email"
+              autoComplete="given-name"
             />
           </Grid>
           <Grid item xs={12}>

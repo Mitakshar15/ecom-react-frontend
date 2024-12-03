@@ -63,10 +63,11 @@ export default function Navigation() {
     //setAnchorEl(null); // Closes the menu
     setOpenAuthModal(false);
   };
+  
 
   const handleOpen = () => {
     setOpenAuthModal(true);
-    navigate("/register");
+    navigate("/login");
   };
 
   const handleMyOrderClick = () => {
@@ -220,22 +221,75 @@ export default function Navigation() {
             </div>
 
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-              <div className="flow-root">
+              { auth.user ?(<div className="flow-root">
                 <a
-                  href="#"
-                  className="-m-2 block p-2 font-medium text-gray-900"
-                >
-                  Sign in
-                </a>
-              </div>
-              <div className="flow-root">
-                <a
-                  href="#"
-                  className="-m-2 block p-2 font-medium text-gray-900"
-                >
-                  Create account
-                </a>
-              </div>
+                    href="#"
+                    className="-m-2 block p-2 font text-gray-900"
+                    onClick={handleUserClick}
+                  >
+                    {auth.user?.firstName}
+                  </a>
+                  
+                  <a
+                    href="#"
+                    className="-m-2 block p-2 mt-4 font-medium text-gray-900"
+                    onClick={handleUserClick}
+                  >
+                    Orders
+                  </a>
+                  <a
+                    href="#"
+                    className="-m-2 block p-2 font-medium text-gray-900"
+                    onClick={handleUserClick}
+                  >
+                    My Profile
+                  </a>
+                  <a
+                    href="#"
+                    className="-m-2 block p-2 text-sm  text-red-600"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </a>
+                  <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={openUserMenu}
+                        onClose={handleCloseUserMenu}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            navigate("/");
+                          }}
+                        >
+                          Home
+                        </MenuItem>
+                        <MenuItem>Profile</MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            navigate("/account/order");
+                          }}
+                        >
+                          My Orders
+                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                      </Menu>
+              </div>) : (
+                <div className="flow-root">
+                  <a
+                    href="#"
+                    className="-m-2 block p-2 font-medium text-gray-900"
+                    onClick={handleOpen}
+                  >
+                    Sign in
+                  </a>
+                </div>) 
+              }
             </div>
 
             <div className="border-t border-gray-200 px-4 py-6">

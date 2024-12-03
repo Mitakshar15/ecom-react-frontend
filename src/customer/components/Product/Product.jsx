@@ -5,8 +5,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -30,6 +30,9 @@ import {
 import { mens_kurta } from "../../../Data/Mens_kurta";
 import ProductCard from "./ProductCard";
 import { filters, singleFilter } from "./FilterData";
+import { Category } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import { findProducts } from "../../../State/Product/Action";
 
 const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
@@ -44,6 +47,20 @@ export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const params  = useParams();
+  const dispatch = useDispatch();
+  const {product} = useSelector((store)=>store);
+
+  const decodedQueryString = decodeURIComponent(location.search);
+  const searchParams = new URLSearchParams(decodedQueryString);
+  const colorValue  = searchParams.get("color");
+  const sizeValue  = searchParams.get("size");
+  const priceValue = searchParams.get("price");
+  const discountValue = searchParams.get("discountedPrice");
+  const sortValue = searchParams.get("sort");
+  const pageNumber = searchParams.get("page") || 1;
+  const stock = searchParams.get("stock");
+
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
 
@@ -73,6 +90,40 @@ export default function Product() {
     const query = searchParams.toString();
     navigate({ search: `?${query}` });
   };
+
+
+
+  useEffect(()=>{
+    
+    const [minPrice, maxPrice] = priceValue === null?[0,10000]: priceValue.split("-").map(Number);
+
+     const data={
+    category: params.lavelThree || "",
+    colors:colorValue ||[],
+    sizes:sizeValue ||[],
+    minPrice,
+    maxPrice,
+    minDiscount: discountValue || 0,
+    stock: stock || null,
+    sort: sortValue || "price_low",
+    pageNumber: pageNumber -1,
+    pageSize : 10,
+    }
+
+    dispatch(findProducts(data))
+
+  },[params.levelThree,
+    colorValue,
+    sizeValue,
+    priceValue,
+    discountValue,
+    sortValue,
+    pageNumber,
+    stock]
+);
+
+
+
 
   return (
     <div className="bg-white">
@@ -348,7 +399,7 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5 rounded-md">
-                  {mens_kurta.map((item) => (
+                  { product.products && product.products?.content?.map((item) => (
                     <ProductCard product={item} />
                   ))}
                 </div>
