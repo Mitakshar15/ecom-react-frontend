@@ -42,11 +42,20 @@ export const login = (userData) => async (dispatch) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signin`, userData);
     const user = response.data;
-    if (user.jwt) localStorage.setItem("jwt", user.jwt);
-    console.log("login ", user);
-    dispatch(loginSuccess(user));
+    
+    if (user.jwt) {
+      localStorage.setItem("jwt", user.jwt);
+      dispatch(loginSuccess(user));
+    } else {
+      const error = new Error("Invalid credentials");
+      error.response = { data: { message: "Login failed - Invalid credentials" }};
+      dispatch(loginFailure(error.message));
+      throw error; // Throw error to be caught by the component
+    }
   } catch (error) {
-    dispatch(loginFailure(error.message));
+    const errorMessage = error.response?.data?.message || "Invalid email or password";
+    dispatch(loginFailure(errorMessage));
+    throw error; // Re-throw the error so it can be caught in the component
   }
 };
 

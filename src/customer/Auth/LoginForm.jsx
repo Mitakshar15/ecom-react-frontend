@@ -1,4 +1,4 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField, Snackbar, Alert } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ export default function LoginForm({ handleNext }) {
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
   const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { auth } = useSelector((store) => store);
   const handleCloseSnakbar = () => setOpenSnackBar(false);
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function LoginForm({ handleNext }) {
   useEffect(() => {
     if (auth.user || auth.error) setOpenSnackBar(true);
   }, [auth.user]);
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
@@ -29,9 +30,17 @@ export default function LoginForm({ handleNext }) {
       email: data.get("email"),
       password: data.get("password"),
     };
-    console.log("login user", userData);
 
-    dispatch(login(userData));
+    try {
+      await dispatch(login(userData));
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Login failed");
+      setOpenSnackBar(true);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackBar(false);
   };
 
   return (
@@ -83,6 +92,19 @@ export default function LoginForm({ handleNext }) {
           </Button>
         </div>
       </div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity="error" 
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
