@@ -10,6 +10,10 @@ const Cart = () => {
   const dispatch = useDispatch();
   const {cart} = useSelector(store=>store);
 
+  const sortedCartItems = cart.cart?.cartItems?.slice()?.sort((a, b) => {
+    return a.id - b.id;
+  });
+
   const handleCheckout = () => {
     navigate("/checkout?step=2");
   }
@@ -38,7 +42,7 @@ const Cart = () => {
       
       {cart.cart?.cartItems?.length ? <div className="lg:grid grid-cols-3 lg:px-16 relative">
         <div className="col-span-2 space-y-4">
-          {cart.cart?.cartItems.map((item)=>(
+          {sortedCartItems.map((item)=>(
             <CartItem 
               key={item.id} 
               item={item} 

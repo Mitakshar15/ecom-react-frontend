@@ -107,7 +107,7 @@ export default function Navigation() {
   };
 
   return (
-    <div className="fixed w-full top-0 bg-white z-50">
+    <div className="fixed w-full top-0 bg-white z-50 border-b border-gray-200">
       {/* Mobile menu */}
       <Dialog open={open} onClose={setOpen} className="relative z-40 lg:hidden">
         <DialogBackdrop
@@ -320,7 +320,7 @@ export default function Navigation() {
           aria-label="Top"
           className="px-4 sm:px-6 lg:px-8"
         >
-          <div className="border-b border-gray-200">
+          <div className="">
             <div className="flex h-16 items-center">
               <button
                 type="button"
