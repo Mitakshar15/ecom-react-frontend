@@ -33,7 +33,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { findProductById } from "../../../State/Product/Action";
 import { store } from "../../../State/store";
-import { addItemToCart } from "../../../State/Cart/Action";
+import { addItemToCart, get } from "../../../State/Cart/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -104,6 +104,7 @@ export default function ProductDetails() {
 
     
     navigate("/cart");
+    dispatch(get());
   }
 
 
@@ -263,10 +264,17 @@ export default function ProductDetails() {
                     </RadioGroup>
                   </fieldset>
                 </div>
+
                 <Button onClick={handleAddToCart} variant="contained" sx={{px:"2rem",py:"1rem",bgcolor:"#9155fd",marginTop:"2rem"}}>
 
                     Add To Cart
                 </Button>
+                <div>
+                  <span className="text-gray-500 text-sm">
+                  Available Quantity: {products.product?.quantity}
+                  </span>
+
+                </div>
               </form>
             </div>
 

@@ -2,19 +2,26 @@ import React, { useEffect } from "react";
 import {Button, IconButton} from "@mui/material";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { useDispatch } from "react-redux";
-import { removeCartItem, updateCartItem } from "../../../State/Cart/Action";
+import { useDispatch, useSelector } from "react-redux";
+import { removeCartItem, updateCartItem, get } from "../../../State/Cart/Action";
 const CartItem = ({item, handleRemoveCartItem}) => {
 const dispatch = useDispatch();
-
+const {cart} = useSelector(store=>store);
   const handleRemove = () => {
     handleRemoveCartItem(item.id);
   }
 
-  const handleUpdateCartItem = (num) => {
-   const data = {data:{quantity:item.quantity+num},cartItemId:item?.id}
-    dispatch(updateCartItem(data))
+  const handleUpdateCartItem = async (num) => {
+    try {
+      const data = {data:{quantity:item.quantity+num}, cartItemId:item?.id}
+      await dispatch(updateCartItem(data));
+    } catch (error) {
+      console.error("Failed to update quantity:", error);
+    }
   }
+  useEffect(()=>{
+    dispatch(get());
+  },[cart.UpdateCartItems])
 
   return (
     <div className="p-5 shadow-lg border rounded-md">
@@ -49,7 +56,7 @@ const dispatch = useDispatch();
        <RemoveCircleOutlineIcon/>
     </IconButton>
     <span className="py-1 px-7 border rounded-sm">{item.quantity} </span>
-    <IconButton sx={{color:"RGB(145 85 253)"}} onClick={()=>handleUpdateCartItem(1)}>
+    <IconButton sx={{color:"RGB(145 85 253)"}} onClick={()=>handleUpdateCartItem(1)} disabled={item.quantity >= item.product.quantity} > 
        <AddCircleOutlineIcon/>
     </IconButton>
 

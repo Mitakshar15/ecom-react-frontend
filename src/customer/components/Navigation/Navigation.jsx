@@ -102,6 +102,8 @@ export default function Navigation() {
     handleCloseUserMenu();
     dispatch(logout());
     localStorage.removeItem("jwt");
+    navigate("/");
+    setOpenAuthModal(true);
   };
 
   return (
@@ -332,7 +334,7 @@ export default function Navigation() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
+                <a href="/">
                   <span className="sr-only">Your Company</span>
                   <img
                     alt=""

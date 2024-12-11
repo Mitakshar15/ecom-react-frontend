@@ -14,13 +14,10 @@ const Cart = () => {
     navigate("/checkout?step=2");
   }
 
-  const handleRemoveCartItem = async (itemId) => {
+  const handleRemoveCartItem =  (itemId) => {
     try {
-      await dispatch(removeCartItem(itemId));
-      // Only fetch updated cart after successful removal
-      setTimeout(() => {
-        dispatch(get());
-      }, 10); // Small delay to ensure backend is updated
+       dispatch(removeCartItem(itemId));
+
     } catch (error) {
       console.error("Failed to remove item:", error);
     }
@@ -28,30 +25,18 @@ const Cart = () => {
 
   useEffect(()=>{
     dispatch(get())
-  },[])
+  },[cart.deleteCartItems])
 
-  if (!cart.cart?.cartItems?.length) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
-        <h1 className="text-2xl font-semibold">Your Cart is Empty</h1>
-        <Button 
-          onClick={() => navigate("/")}
-          variant="contained"
-          sx={{
-            px: "2rem",
-            py: "0.7rem",
-            bgcolor: "#9155fd",
-          }}
-        >
-          Shop Now
-        </Button>
-      </div>
-    );
-  }
-
+ 
   return (
+
+
+
+    
     <div className="pt-10 mt-[100px]">
-      <div className="lg:grid grid-cols-3 lg:px-16 relative">
+      
+      
+      {cart.cart?.cartItems?.length ? <div className="lg:grid grid-cols-3 lg:px-16 relative">
         <div className="col-span-2 space-y-4">
           {cart.cart?.cartItems.map((item)=>(
             <CartItem 
@@ -106,7 +91,20 @@ const Cart = () => {
          
           </div>
         </div>
-      </div>
+      </div> : <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
+        <h1 className="text-2xl font-semibold">Your Shopping Cart is Empty</h1>
+        <Button 
+          onClick={() => navigate("/")}
+          variant="contained"
+          sx={{
+            px: "2rem",
+            py: "0.7rem",
+            bgcolor: "#9155fd",
+          }}
+        >
+          Shop Now
+        </Button>
+      </div> }
     </div>
   );
 };
