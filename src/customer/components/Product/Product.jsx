@@ -33,6 +33,7 @@ import { filters, singleFilter } from "./FilterData";
 import { Category } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../../State/Product/Action";
+import { Pagination } from "@mui/material";
 
 const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
@@ -49,7 +50,7 @@ export default function Product() {
   const navigate = useNavigate();
   const params  = useParams();
   const dispatch = useDispatch();
-  const {product} = useSelector((store)=>store);
+  const {products} = useSelector((store)=>store);
 
   const decodedQueryString = decodeURIComponent(location.search);
   const searchParams = new URLSearchParams(decodedQueryString);
@@ -91,7 +92,13 @@ export default function Product() {
     navigate({ search: `?${query}` });
   };
 
-
+  const handlePaginationChange = (value) => {
+    const searchParams = new URLSearchParams(decodedQueryString);
+    searchParams.set("page", value);
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+    console.log("QUERY",query);
+  }
 
   useEffect(()=>{
     
@@ -399,13 +406,24 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5 rounded-md">
-                  { product.products && product.products?.content?.map((item) => (
+                  { products.products && products.products?.content?.map((item) => (
                     <ProductCard product={item} />
                   ))}
                 </div>
               </div>
             </div>
           </section>
+
+<section className="w-full px=[3.6rem]">
+  <div className="px-4 py-5 flex justify-center">
+    <Pagination 
+      count={products.products?.totalPages} 
+      color="secondary" 
+      onChange={(e, value) => handlePaginationChange(value)} 
+    />
+  </div>
+</section>
+
         </main>
       </div>
     </div>

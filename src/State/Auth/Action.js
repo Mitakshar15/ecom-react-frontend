@@ -23,9 +23,19 @@ export const register = (userData) => async (dispatch) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signup`, userData);
     const user = response.data;
-    if (user.jwt) localStorage.setItem("jwt", user.jwt);
-    console.log("registerr :- ", user);
-    dispatch(registerSuccess(user));
+    
+    if (user.message === "USER ALREADY EXISTS") {
+      dispatch(registerFailure("USER ALREADY EXISTS"));
+      return;
+    }
+    
+    if (user.jwt) {
+      localStorage.setItem("jwt", user.jwt);
+      dispatch(registerSuccess(user));
+    } else {
+      dispatch(registerFailure("Registration failed"));
+    }
+
   } catch (error) {
     console.log("error ", error);
     dispatch(registerFailure(error.message));

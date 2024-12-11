@@ -17,11 +17,11 @@ export const RegisterForm = () => {
     if (jwt) {
       dispatch(getUser(jwt));
     }
-  }, [jwt]);
+    if (auth.user || auth.error) {
+      setOpenSnackBar(true);
+    }
+  }, [jwt,auth.user, auth.error]);
 
-  useEffect(() => {
-    if (auth.user || auth.error) setOpenSnackBar(true);
-  }, [auth.user]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -37,6 +37,7 @@ export const RegisterForm = () => {
     dispatch(register(userData));
 
     console.log(userData);
+    console.log("AUTH",auth);
   };
 
   return (
@@ -113,8 +114,16 @@ export const RegisterForm = () => {
         autoHideDuration={6000}
         onClose={handleClose}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          {auth.error ? auth.error : auth.user ? "Register Success" : ""}
+        <Alert 
+          onClose={handleClose} 
+          severity={auth.error ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {auth.error 
+            ? auth.error === "Registration failed" 
+              ? "THIS EMAIL IS ALREADY REGISTERED" 
+              : auth.error 
+            : "Registration Successful"}
         </Alert>
       </Snackbar>
     </div>
