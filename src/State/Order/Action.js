@@ -10,14 +10,14 @@ import {
   GET_ORDER_HISTORY_REQUEST,
   GET_ORDER_HISTORY_SUCCESS,
 } from "./ActionType";
-import { api } from "../../config/apiConfig";
+import apiConfig, { api } from "../../config/apiConfig";
 
 export const createOrder = (reqData) => async (dispatch) => {
   dispatch({type: CREATE_ORDER_REQUEST})
   try {
     dispatch({ type: CREATE_ORDER_REQUEST });
     
-    const { data } = await api.post(
+    const { data } = await apiConfig.post(
       `/api/orders/`,
       reqData.address,
      
@@ -45,7 +45,7 @@ export const getOrderById = (orderId) => async (dispatch) => {
   try {
 
 
-    const { data } = await api.get(
+    const { data } = await apiConfig.get(
       `/api/orders/${orderId}`,
       
     );
@@ -74,7 +74,7 @@ export const getOrderHistory = (reqData) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await api.get(`/api/orders/user`);
+    const { data } = await apiConfig.get(`/api/orders/user`);
     console.log("order history -------- ", data);
     dispatch({
       type: GET_ORDER_HISTORY_SUCCESS,

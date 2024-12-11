@@ -1,20 +1,35 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AdressCard } from '../AdressCard/AdressCard'
 import { Button } from '@mui/material'
 import CartItem from '../Cart/CartItem'
+import { useDispatch, useSelector } from 'react-redux'
+import { getOrderById } from '../../../State/Order/Action'
+import { useLocation } from 'react-router-dom'
 
 export const OrderSummary = () => {
+
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const orderId = searchParams.get('order_id');
+  const{order}  = useSelector(store=>store);
+ useEffect(()=>{
+
+  dispatch(getOrderById(orderId));
+ },[orderId])
+
+
   return (
     <div>
      
      <div className='p-5 shadow-lg rounded-md border'>
-       <AdressCard/>
+       <AdressCard address={order.order?.shippingAddress} />
      </div>
 
      <div className="pt-10">
       <div className="lg:grid grid-cols-3  relative">
         <div className="col-span-2 space-y-4">
-       {[1,1].map((item)=><CartItem/>) }
+       {order.order?.orderItemList?.map((item)=><CartItem  item={item} />) }
         </div>
 
         <div className="px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0">
