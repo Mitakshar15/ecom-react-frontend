@@ -3,27 +3,63 @@ import CartItem from "./CartItem";
 import { Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { get } from "../../../State/Cart/Action";
+import { get, removeCartItem } from "../../../State/Cart/Action";
+
 const Cart = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {cart} = useSelector(store=>store);
 
- const navigate = useNavigate();
- const dispatch = useDispatch();
- const {cart} = useSelector(store=>store);
- const handleCheckout = () => {
-   navigate("/checkout?step=2");
- }
+  const handleCheckout = () => {
+    navigate("/checkout?step=2");
+  }
 
- useEffect(()=>{
-  dispatch(get())
- },[])
+  const handleRemoveCartItem = async (itemId) => {
+    try {
+      await dispatch(removeCartItem(itemId));
+      // Only fetch updated cart after successful removal
+      setTimeout(() => {
+        dispatch(get());
+      }, 10); // Small delay to ensure backend is updated
+    } catch (error) {
+      console.error("Failed to remove item:", error);
+    }
+  };
 
+  useEffect(()=>{
+    dispatch(get())
+  },[])
 
+  if (!cart.cart?.cartItems?.length) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
+        <h1 className="text-2xl font-semibold">Your Cart is Empty</h1>
+        <Button 
+          onClick={() => navigate("/")}
+          variant="contained"
+          sx={{
+            px: "2rem",
+            py: "0.7rem",
+            bgcolor: "#9155fd",
+          }}
+        >
+          Shop Now
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-10">
+    <div className="pt-10 mt-[100px]">
       <div className="lg:grid grid-cols-3 lg:px-16 relative">
         <div className="col-span-2 space-y-4">
-       {cart.cart?.cartItems.map((item)=><CartItem item={item} />) }
+          {cart.cart?.cartItems.map((item)=>(
+            <CartItem 
+              key={item.id} 
+              item={item} 
+              handleRemoveCartItem={handleRemoveCartItem}
+            />
+          ))}
         </div>
 
         <div className="px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0">

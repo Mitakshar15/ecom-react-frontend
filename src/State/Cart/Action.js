@@ -54,7 +54,7 @@ export const updateCartItem = (reqData) => async (dispatch) => {
 
   try {
     const { data } = await apiConfig.put(
-      `/api/cart_items/ ${reqData.cartItemId}`,
+      `/api/cart_items/${reqData.cartItemId}`,
       reqData.data
     );
     dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data });

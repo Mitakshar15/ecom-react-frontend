@@ -28,7 +28,7 @@ const DeliveryAddressForm = () => {
         <Grid
           xs={12}
           lg={5}
-          className="border rounded-e-md shadow-md h-[30.5rem] overflow-y-scroll"
+          className="border rounded-e-md shadow-md h-[30.5rem] overflow-y-scroll mt-[30px]"
         >
           <div className="p-5 py-7 border-b cursor-pointer">
             <AdressCard />
@@ -125,7 +125,7 @@ const DeliveryAddressForm = () => {
                     variant="contained"
                     type="submit"
                   >
-                    Deliver Here
+                    Save
                   </Button>
                 </Grid>
               </Grid>

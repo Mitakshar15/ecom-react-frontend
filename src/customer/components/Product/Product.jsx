@@ -133,7 +133,7 @@ export default function Product() {
 
 
   return (
-    <div className="bg-white">
+    <div className="bg-white mt-[50px]">
       <div>
         {/* Mobile filter dialog */}
         <Dialog

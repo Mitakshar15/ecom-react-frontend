@@ -113,7 +113,7 @@ export default function ProductDetails() {
   },[params.productId])
 
   return (
-    <div className="bg-white lg:px-20">
+    <div className="bg-white lg:px-20 mt-[120px]">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol
