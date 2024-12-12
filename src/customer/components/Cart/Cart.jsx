@@ -4,12 +4,13 @@ import { Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { get, removeCartItem } from "../../../State/Cart/Action";
+import { getUser } from "../../../State/Auth/Action";
 
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {cart} = useSelector(store=>store);
-
+  const {auth} = useSelector(store=>store);
   const sortedCartItems = cart.cart?.cartItems?.slice()?.sort((a, b) => {
     return a.id - b.id;
   });
@@ -29,6 +30,7 @@ const Cart = () => {
 
   useEffect(()=>{
     dispatch(get())
+  
   },[cart.deleteCartItems])
 
  

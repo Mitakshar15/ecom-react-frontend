@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AdressCard } from '../AdressCard/AdressCard'
 import { Button } from '@mui/material'
 import CartItem from '../Cart/CartItem'
@@ -8,24 +8,52 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { removeAllCartItem } from '../../../State/Cart/Action'
 
 export const OrderSummary = () => {
-
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get('order_id');
-  const{order}  = useSelector(store=>store);
+  const { order } = useSelector(store => store);
   const navigate = useNavigate();
-  const {cart} = useSelector(store=>store);
+  const { cart } = useSelector(store => store);
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(getOrderById(orderId))
+        .catch(err => {
+          setError("Failed to load order details. Please try again.");
+          console.error("Error loading order:", err);
+        });
+    } else {
+      setError("No order ID found");
+    }
+  }, [orderId, dispatch]);
+
   const handleConfirmOrder = () => {
     dispatch(confirmOrder(order.order.id))
     dispatch(removeAllCartItem(cart.cart?.id))
     navigate("/orderConfirmed")
   }
- useEffect(()=>{
 
-  dispatch(getOrderById(orderId));
- },[orderId])
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-[80vh] flex items-center justify-center">
+          <div className="text-2xl text-red-600">{error}</div>
+        </div>
+      </div>
+    );
+  }
 
+  if (!order.order) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-[80vh] flex items-center justify-center">
+          <div className="text-2xl text-gray-600">Loading order details...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">

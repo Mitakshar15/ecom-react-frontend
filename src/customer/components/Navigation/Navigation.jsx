@@ -57,10 +57,21 @@ export default function Navigation() {
     if (jwt) {
       dispatch(getUser(jwt));
     }
-  }, [jwt]);
+  }, [jwt, auth.jwt, dispatch]);
+
+  useEffect(() => {
+    if (auth.user) {
+      setOpenAuthModal(false);
+      if (location.pathname === "/login" || location.pathname === "/register") {
+        navigate("/");
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
+    }
+  }, [auth.user, location.pathname, navigate]);
 
   const handleClose = () => {
-    //setAnchorEl(null); // Closes the menu
     setOpenAuthModal(false);
   };
   
@@ -84,26 +95,12 @@ export default function Navigation() {
     setOpen(false);
   };
 
-  useEffect(
-    () => {
-      if (auth.user) {
-        handleClose();
-      }
-      if (location.pathname === "/login" || location.pathname === "/register") {
-        navigate("");
-      }
-    },
-    [auth.user],
-    location.pathname,
-    jwt
-  );
-
   const handleLogout = () => {
     handleCloseUserMenu();
     dispatch(logout());
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     navigate("/");
-    setOpenAuthModal(true);
+    window.location.reload();
   };
 
   return (
@@ -539,9 +536,9 @@ export default function Navigation() {
 
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a href="#" className="group -m-2 flex items-center p-2">
+                  <a href="/cart" className="group -m-2 flex items-center p-2">
                     <ShoppingBagIcon
-                      onClick={()=>navigate("/cart")}
+                    
                       aria-hidden="true"
                       className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                     />
