@@ -1,5 +1,8 @@
 import axios from "axios";
 import {
+  CONFIRM_ORDER_FAILURE,
+  CONFIRM_ORDER_REQUEST,
+  CONFIRM_ORDER_SUCCESS,
   CREATE_ORDER_FAILURE,
   CREATE_ORDER_REQUEST,
   CREATE_ORDER_SUCCESS,
@@ -88,3 +91,27 @@ export const getOrderHistory = (reqData) => async (dispatch, getState) => {
     });
   }
 };
+
+export const confirmOrder = (orderId) => async (dispatch) => {
+dispatch({type: CONFIRM_ORDER_REQUEST});
+ try {
+  const   {data} = await apiConfig.put(`/api/admin/orders/${orderId}/confirmed`);
+
+  console.log("confirm order ", data);
+  
+  dispatch({
+    type: CONFIRM_ORDER_SUCCESS,
+    payload: data,
+  })
+ } catch (error) {
+  dispatch({
+    type: CONFIRM_ORDER_FAILURE,
+    payload: error.message,
+  })
+ }
+  
+
+
+  
+
+}

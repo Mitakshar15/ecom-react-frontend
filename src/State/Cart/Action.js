@@ -6,6 +6,9 @@ import {
   GET_CART_FAILURE,
   GET_CART_REQUEST,
   GET_CART_SUCCESS,
+  REMOVE_ALL_CART_ITEM_FAILURE,
+  REMOVE_ALL_CART_ITEM_REQUEST,
+  REMOVE_ALL_CART_ITEM_SUCCESS,
   REMOVE_CART_ITEM_FAILURE,
   REMOVE_CART_ITEM_REQUEST,
   REMOVE_CART_ITEM_SUCCESS,
@@ -62,3 +65,13 @@ export const updateCartItem = (reqData) => async (dispatch) => {
     dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: error.message });
   }
 };
+
+export const removeAllCartItem = (reqData) => async (dispatch) => {
+  dispatch({type: REMOVE_ALL_CART_ITEM_REQUEST});
+  try {
+    const {data} = await apiConfig.delete(`/api/cart_items/removeAllItem/${reqData}`);
+    dispatch({type: REMOVE_ALL_CART_ITEM_SUCCESS, payload: data});
+  } catch (error) {
+    dispatch({type: REMOVE_ALL_CART_ITEM_FAILURE, payload: error.message});
+  }
+}

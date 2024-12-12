@@ -9,6 +9,7 @@ import ProductDetails from "../customer/components/ProductDetails/ProductDetails
 import Checkout from "../customer/components/Checkout/Checkout";
 import { OrderDetails } from "../customer/components/Order/OrderDetails";
 import { Order } from "../customer/components/Order/Order";
+import OrderConfirmedPage from "../customer/components/Checkout/OrderConfirmedPage";
 
 export const CustomerRoutes = () => {
   return (
@@ -28,7 +29,7 @@ export const CustomerRoutes = () => {
 
           <Route path="/account/order"  element={<Order/>}></Route>
           <Route path="/account/order/:orderId"  element={<OrderDetails/>}></Route>
-          
+          <Route path="/orderConfirmed" element={<OrderConfirmedPage/>}></Route>
       
 
       {/* <Order/> */}
