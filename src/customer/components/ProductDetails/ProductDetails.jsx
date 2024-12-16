@@ -1,24 +1,3 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    theme: {
-      extend: {
-        gridTemplateRows: {
-          '[auto,auto,1fr]': 'auto auto 1fr',
-        },
-      },
-    },
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
-*/
 "use client";
 
 import { useEffect, useState } from "react";
@@ -35,6 +14,7 @@ import { findProductById } from "../../../State/Product/Action";
 import { store } from "../../../State/store";
 import { addItemToCart, get } from "../../../State/Cart/Action";
 import { addReview, findProductReviews } from "../../../State/Reviews/Action";
+import { addRating } from "../../../State/Rating/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -111,10 +91,31 @@ export default function ProductDetails() {
     dispatch(get());
   }
 
-  const handleSubmitReview = (e) => {
+  const handleSubmitRating = (e) => {
     e.preventDefault();
     if (reviewInput.rating === 0) {
       alert("Please select a rating");
+      return;
+    }
+    dispatch(addRating(products?.product?.id,reviewInput.rating))
+      .then(() => {
+        // Fetch updated product data after rating submission
+        dispatch(findProductById({ productId: params.productId }));
+        setReviewInput({
+          rating: 0,
+          comment: "",
+        });
+      });
+  };
+
+  const handleSubmitReview = (e) => {
+    e.preventDefault();
+    if (reviewInput.rating === 0) {
+      alert("Please select a rating before submitting your review");
+      return;
+    }
+    if (!reviewInput.comment.trim()) {
+      alert("Please write a review");
       return;
     }
     
@@ -125,7 +126,6 @@ export default function ProductDetails() {
       review: reviewInput.comment,
     })).then(() => {
       dispatch(findProductById({ productId: params.productId }));
-      
       setReviewInput({
         rating: 0,
         comment: "",
@@ -137,7 +137,7 @@ export default function ProductDetails() {
     const data ={productId:params.productId}
   dispatch(findProductById(data))  
    
-  },[params.productId])
+  },[params.productId,dispatch])
 
   return (
     <div className="bg-white lg:px-20 mt-[120px]">
@@ -226,9 +226,9 @@ export default function ProductDetails() {
               <div className="mt-6">
                 <div className="flex items-center space-x-3">
                   <Rating name="read-only" value={3.5} readOnly />
-                  <p className="opacity-50 text-sm">5604 Ratings</p>
+                  <p className="opacity-50 text-sm">{products.product?.ratings?.length} Ratings</p>
                   <p className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                    3807 Reviews
+                    {products.product?.reviews?.length} Reviews
                   </p>
                 </div>
               </div>
@@ -332,6 +332,7 @@ export default function ProductDetails() {
                 </div>
               </div>
 
+
               <div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
@@ -343,12 +344,46 @@ export default function ProductDetails() {
           </div>
         </section>
 
+              {/* Quick Rating Section */}
+              <div className="mt-10 p-4 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Rate This Product</h3>
+                <form onSubmit={handleSubmitRating} className="space-y-4">
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-sm text-gray-600">Your Rating</label>
+                    <div className="flex items-center space-x-4">
+                      <Rating
+                        name="quick-rating"
+                        value={reviewInput.rating}
+                        onChange={(event, newValue) => {
+                          setReviewInput(prev => ({...prev, rating: newValue}));
+                        }}
+                        precision={0.5}
+                        size="large"
+                      />
+                      <Button 
+                        type="submit"
+                        variant="contained" 
+                        size="medium"
+                        sx={{
+                          bgcolor:"#9155fd",
+                          "&:hover": { bgcolor: "#804dee" },
+                        }}
+                      >
+                        Submit Rating
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Your rating helps other shoppers make better decisions
+                  </p>
+                </form>
+              </div>
         {/* ratings and reviews */}
 <section className="p-6 bg-white rounded-lg shadow-lg">
     <h1 className="font-bold text-2xl mb-6 text-gray-800">
         Recent Reviews & Ratings
     </h1>
-    <div className=" rounded-lg p-6 bg-gray-50 bg-opacity-70">
+    <div className="rounded-lg p-6 bg-gray-50 bg-opacity-70">
         <Grid container spacing={4}>
             {/* Review Section */}
             <Grid item xs={12} md={7}>
@@ -365,90 +400,112 @@ export default function ProductDetails() {
                 </div>
             </Grid>
 
-            {/* Ratings Section */}
+            {/* Ratings & Review Form Section */}
             <Grid item xs={12} md={5} className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-700">Product Ratings</h2>
-                
-                {/* Overall Rating Display */}
-                <div className="flex items-center space-x-3">
-                    <Rating 
-                        readOnly 
-                        value={products?.product?.ratings || 0} 
-                        precision={0.5} 
-                    />
-                    <p className="text-gray-600 text-sm">
-                        {products?.product?.reviews?.length || 0} Ratings
-                    </p>
-                </div>
+                {/* Rating Statistics */}
+                <Box className="space-y-4">
+                    <h2 className="text-xl font-semibold text-gray-700">Product Ratings</h2>
+                    {/* Overall Rating Display */}
+                    <div className="flex items-center space-x-3">
+                        <Rating 
+                            readOnly 
+                            value={products?.product?.ratings || 0} 
+                            precision={0.5} 
+                        />
+                        <p className="text-gray-600 text-sm">
+                            {products?.product?.ratings?.length || 0} Ratings
+                        </p>
+                    </div>
 
-                {/* Rating Breakdown */}
-                <Box className="mt-6 space-y-4">
-                    {[
-                        { label: 'Excellent', value: 40, color: 'success' },
-                        { label: 'Very Good', value: 10, color: 'success' },
-                        { label: 'Good', value: 20, color: 'info' },
-                        { label: 'Average', value: 50, color: 'warning' },
-                        { label: 'Poor', value: 80, color: 'error' },
-                    ].map((rating, index) => (
-                        <Grid container alignItems="center" key={index}>
-                            <Grid item xs={3}>
-                                <p className="text-gray-600">{rating.label}</p>
+                    {/* Rating Breakdown */}
+                    <Box className="mt-6 space-y-4">
+                        {[
+                            { label: 'Excellent', value: 40, color: 'success' },
+                            { label: 'Very Good', value: 10, color: 'success' },
+                            { label: 'Good', value: 20, color: 'info' },
+                            { label: 'Average', value: 50, color: 'warning' },
+                            { label: 'Poor', value: 80, color: 'error' },
+                        ].map((rating, index) => (
+                            <Grid container alignItems="center" key={index}>
+                                <Grid item xs={3}>
+                                    <p className="text-gray-600">{rating.label}</p>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <LinearProgress
+                                        sx={{
+                                            bgcolor: '#e0e0e0',
+                                            '& .MuiLinearProgress-bar': {
+                                                bgcolor: rating.color === 'success' ? 'green' :
+                                                        rating.color === 'info' ? 'blue' :
+                                                        rating.color === 'warning' ? 'orange' :
+                                                        'red',
+                                            },
+                                            borderRadius: '4px',
+                                            height: '8px',
+                                        }}
+                                        variant="determinate"
+                                        value={rating.value}
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={9}>
-                                <LinearProgress
-                                    sx={{
-                                        bgcolor: '#e0e0e0',
-                                        '& .MuiLinearProgress-bar': {
-                                            bgcolor: rating.color === 'success' ? 'green' :
-                                                    rating.color === 'info' ? 'blue' :
-                                                    rating.color === 'warning' ? 'orange' :
-                                                    'red',
-                                        },
-                                        borderRadius: '4px',
-                                        height: '8px',
-                                    }}
-                                    variant="determinate"
-                                    value={rating.value}
-                                />
-                            </Grid>
-                        </Grid>
-                    ))}
+                        ))}
+                    </Box>
                 </Box>
 
-                <div className="mb-10">
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4">Write a Review</h2>
-                  <form onSubmit={handleSubmitReview} className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <span className="text-gray-700">Your Rating:</span>
-                      <Rating
-                        name="rating-input"
-                        value={reviewInput.rating}
-                        onChange={(event, newValue) => {
-                          setReviewInput(prev => ({...prev, rating: newValue}));
-                        }}
-                        precision={0.5}
-                      />
+                {/* Review Form - Now below rating statistics */}
+                <div className="mt-8  bg-transparent p-6 rounded-lg shadow-sm">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-6">Write a Review</h2>
+                    
+                    {/* Rating Input */}
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Rate this product *
+                        </label>
+                        <div className="flex items-center space-x-3">
+                            <Rating
+                                name="rating-input"
+                                value={reviewInput.rating}
+                                onChange={(event, newValue) => {
+                                    setReviewInput(prev => ({...prev, rating: newValue}));
+                                }}
+                                precision={0.5}
+                                size="large"
+                            />
+                            <span className="text-sm text-gray-500">
+                                {reviewInput.rating > 0 ? `${reviewInput.rating} stars` : ''}
+                            </span>
+                        </div>
                     </div>
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={4}
-                      variant="outlined"
-                      placeholder="Write your review here..."
-                      value={reviewInput.comment}
-                      onChange={(e) => setReviewInput(prev => ({...prev, comment: e.target.value}))}
-                    />
+
+                    {/* Review Input */}
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Your Review *
+                        </label>
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            variant="outlined"
+                            placeholder="What did you like or dislike? What did you use this product for?"
+                            value={reviewInput.comment}
+                            onChange={(e) => setReviewInput(prev => ({...prev, comment: e.target.value}))}
+                        />
+                    </div>
+
                     <Button 
-                      type="submit"
-                      variant="contained" 
-                      sx={{
-                        bgcolor:"#9155fd",
-                        "&:hover": { bgcolor: "#804dee" }
-                      }}
+                        onClick={handleSubmitReview}
+                        variant="contained" 
+                        fullWidth
+                        sx={{
+                            bgcolor:"#9155fd",
+                            "&:hover": { bgcolor: "#804dee" },
+                            py: 1.5,
+                            mt: 2
+                        }}
                     >
-                      Submit Review
+                        Submit Review
                     </Button>
-                  </form>
                 </div>
             </Grid>
         </Grid>
