@@ -76,6 +76,8 @@ export default function ProductDetails() {
   const params = useParams();
   const dispatch = useDispatch();
   const {products} = useSelector(store=>store);
+  const [avgRating,setAvgRating] = useState(0);
+
   const [reviewInput, setReviewInput] = useState({
     rating: 0,
     comment: "",
@@ -89,6 +91,19 @@ export default function ProductDetails() {
     
     navigate("/cart");
     dispatch(get());
+  }
+
+  const calculateAvgRating = ()=>{
+    let sum = 0;
+    if (products?.product?.ratings) {
+      for (let i = 0; i < products.product.ratings.length; i++) {
+        sum += products.product.ratings[i].rating;
+      }
+      const average = sum / products.product.ratings.length;
+      setAvgRating(average);
+    } else {
+      setAvgRating(0);
+    }
   }
 
   const handleSubmitRating = (e) => {
@@ -106,6 +121,7 @@ export default function ProductDetails() {
           comment: "",
         });
       });
+ 
   };
 
   const handleSubmitReview = (e) => {
@@ -133,10 +149,16 @@ export default function ProductDetails() {
     });
   };
 
+ useEffect(()=>{
+  calculateAvgRating();
+ });
+
+
+ 
   useEffect(()=>{
     const data ={productId:params.productId}
   dispatch(findProductById(data))  
-   
+  
   },[params.productId,dispatch])
 
   return (
@@ -225,7 +247,7 @@ export default function ProductDetails() {
               {/* Reviews */}
               <div className="mt-6">
                 <div className="flex items-center space-x-3">
-                  <Rating name="read-only" value={3.5} readOnly />
+                  <Rating name="read-only" value={avgRating} readOnly />
                   <p className="opacity-50 text-sm">{products.product?.ratings?.length} Ratings</p>
                   <p className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
                     {products.product?.reviews?.length} Reviews
