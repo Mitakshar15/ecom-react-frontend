@@ -12,6 +12,9 @@ import {
   GET_ORDER_HISTORY_FAILURE,
   GET_ORDER_HISTORY_REQUEST,
   GET_ORDER_HISTORY_SUCCESS,
+  PLACE_ORDER_FAILURE,
+  PLACE_ORDER_REQUEST,
+  PLACE_ORDER_SUCCESS,
 } from "./ActionType";
 import apiConfig, { api } from "../../config/apiConfig";
 
@@ -115,3 +118,27 @@ dispatch({type: CONFIRM_ORDER_REQUEST});
   
 
 }
+
+export const placeOrder = (orderId) => async (dispatch) => {
+  dispatch({type: PLACE_ORDER_REQUEST});
+   try {
+    const   {data} = await apiConfig.put(`/api/admin/orders/${orderId}/placed`);
+  
+    console.log("Place order ", data);
+    
+    dispatch({
+      type: PLACE_ORDER_SUCCESS,
+      payload: data,
+    })
+   } catch (error) {
+    dispatch({
+      type: PLACE_ORDER_FAILURE,
+      payload: error.message,
+    })
+   }
+    
+  
+  
+    
+  
+  }

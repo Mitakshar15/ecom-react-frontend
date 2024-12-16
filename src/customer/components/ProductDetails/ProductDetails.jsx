@@ -24,7 +24,7 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Radio, RadioGroup } from "@headlessui/react";
-import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
+import { Box, Button, Grid, LinearProgress, Rating, TextField } from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
 import { mens_kurta } from "../../../Data/Mens_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
@@ -34,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { findProductById } from "../../../State/Product/Action";
 import { store } from "../../../State/store";
 import { addItemToCart, get } from "../../../State/Cart/Action";
+import { addReview, findProductReviews } from "../../../State/Reviews/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -95,7 +96,10 @@ export default function ProductDetails() {
   const params = useParams();
   const dispatch = useDispatch();
   const {products} = useSelector(store=>store);
-  console.log("PARAMS",params.productId)
+  const [reviewInput, setReviewInput] = useState({
+    rating: 0,
+    comment: "",
+  });
 
   const handleAddToCart = () => {
     const data = {productId:params.productId,size:selectedSize.name}
@@ -107,10 +111,32 @@ export default function ProductDetails() {
     dispatch(get());
   }
 
+  const handleSubmitReview = (e) => {
+    e.preventDefault();
+    if (reviewInput.rating === 0) {
+      alert("Please select a rating");
+      return;
+    }
+    
+    dispatch(addReview({
+      productId: products?.product?.id,
+      product: products?.product,
+      rating: reviewInput.rating,
+      review: reviewInput.comment,
+    })).then(() => {
+      dispatch(findProductById({ productId: params.productId }));
+      
+      setReviewInput({
+        rating: 0,
+        comment: "",
+      });
+    });
+  };
 
   useEffect(()=>{
     const data ={productId:params.productId}
-  dispatch(findProductById(data))   
+  dispatch(findProductById(data))  
+   
   },[params.productId])
 
   return (
@@ -327,9 +353,15 @@ export default function ProductDetails() {
             {/* Review Section */}
             <Grid item xs={12} md={7}>
                 <div className="space-y-6">
-                    {[1, 1, 1].map((item, index) => (
-                        <ProductReviewCard key={index} />
-                    ))}
+                    {products?.product?.reviews?.length > 0 ? (
+                        products.product.reviews.map((review, index) => (
+                            <ProductReviewCard key={index} review={review} />
+                        ))
+                    ) : (
+                        <div className="text-center py-10">
+                            <p className="text-gray-500 text-lg">No reviews yet. Be the first one to review!</p>
+                        </div>
+                    )}
                 </div>
             </Grid>
 
@@ -339,8 +371,14 @@ export default function ProductDetails() {
                 
                 {/* Overall Rating Display */}
                 <div className="flex items-center space-x-3">
-                    <Rating readOnly value={3} precision={0.5} />
-                    <p className="text-gray-600 text-sm">5604 Ratings</p>
+                    <Rating 
+                        readOnly 
+                        value={products?.product?.ratings || 0} 
+                        precision={0.5} 
+                    />
+                    <p className="text-gray-600 text-sm">
+                        {products?.product?.reviews?.length || 0} Ratings
+                    </p>
                 </div>
 
                 {/* Rating Breakdown */}
@@ -376,6 +414,42 @@ export default function ProductDetails() {
                         </Grid>
                     ))}
                 </Box>
+
+                <div className="mb-10">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4">Write a Review</h2>
+                  <form onSubmit={handleSubmitReview} className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-gray-700">Your Rating:</span>
+                      <Rating
+                        name="rating-input"
+                        value={reviewInput.rating}
+                        onChange={(event, newValue) => {
+                          setReviewInput(prev => ({...prev, rating: newValue}));
+                        }}
+                        precision={0.5}
+                      />
+                    </div>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={4}
+                      variant="outlined"
+                      placeholder="Write your review here..."
+                      value={reviewInput.comment}
+                      onChange={(e) => setReviewInput(prev => ({...prev, comment: e.target.value}))}
+                    />
+                    <Button 
+                      type="submit"
+                      variant="contained" 
+                      sx={{
+                        bgcolor:"#9155fd",
+                        "&:hover": { bgcolor: "#804dee" }
+                      }}
+                    >
+                      Submit Review
+                    </Button>
+                  </form>
+                </div>
             </Grid>
         </Grid>
     </div>

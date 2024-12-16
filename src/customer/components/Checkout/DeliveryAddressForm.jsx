@@ -11,34 +11,24 @@ const DeliveryAddressForm = () => {
   const navigate = useNavigate();
   const {auth} = useSelector(store => store);
   const [deliveryAddress, setDeliveryAddress] = useState({
-    firstName: "Mitakshar",
-    lastName: "Hegde",
-    address: "Somanalli, Targod post, Sirsi, 581402",
-    zipCode: "581402",
-    mobile: "9989098763",
-    city: "Sirsi",
-    state: "Karnataka",
-    
+    firstName: "",
+    lastName: "",
+    streetAddress: "",
+    zipCode: "",
+    mobile: "",
+    city: "",
+    state: "",
   });
-  console.log("INSIDE ADDRESS",auth);
-  const addresses = auth.user?.addresses;
-  console.log("ADDRESS ADDRESS ",addresses)
+
+  const addresses = auth.user?.addresses || [];
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showAddressList, setShowAddressList] = useState(true);
-
-  useEffect(() => {
-    if (addresses && addresses.length > 0) {
-      setShowAddressList(true);
-    } else {
-      setShowAddressList(false);
-    }
-  }, [addresses,dispatch]);
 
   const handleAddressSelect = (selectedAddress) => {
     setDeliveryAddress({
       firstName: selectedAddress.firstName,
       lastName: selectedAddress.lastName,
-      address: selectedAddress.address,
+      streetAddress: selectedAddress.streetAddress,
       city: selectedAddress.city,
       state: selectedAddress.state,
       zipCode: selectedAddress.zipCode,
@@ -55,7 +45,7 @@ const DeliveryAddressForm = () => {
     const newAddress = {
       firstName: data.get('firstName'),
       lastName: data.get('lastName'),
-      address: data.get('address'),
+      streetAddress: data.get('streetAddress'),
       city: data.get('city'),
       state: data.get('state'),
       zipCode: data.get('zipCode'),
@@ -64,6 +54,11 @@ const DeliveryAddressForm = () => {
     
     setDeliveryAddress(newAddress);
     setShowAddressList(false);
+    
+    // Here you would typically dispatch an action to save the address to backend
+    // dispatch(saveAddress(newAddress));
+    
+    e.target.reset();
   };
 
   const handleDeliverySubmit = () => {
@@ -74,6 +69,62 @@ const DeliveryAddressForm = () => {
     dispatch(createOrder(orderData));
   };
 
+  const renderAddressSection = () => {
+    if (showAddressList) {
+      return (
+        <div className="p-5">
+          <Typography variant="h6" gutterBottom>
+            {addresses.length > 0 ? "Choose Delivery Address" : "No Saved Addresses"}
+          </Typography>
+          
+          {addresses.length > 0 ? (
+            addresses.map((addr) => (
+              <div 
+                key={addr.id} 
+                className="border p-3 mb-4 cursor-pointer hover:border-primary"
+                onClick={() => handleAddressSelect(addr)}
+              >
+                <AdressCard address={addr} />
+              </div>
+            ))
+          ) : (
+            <div>
+              <Typography color="text.secondary" className="mt-2">
+                You have no saved addresses. Please add a new address using the form.
+              </Typography>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="p-5 py-7 cursor-pointer">
+        <div className="flex justify-between items-center mb-4">
+          <Typography variant="h6">
+            Delivery Address
+          </Typography>
+          <Button 
+            variant="text" 
+            onClick={() => setShowAddressList(true)}
+          >
+            Change
+          </Button>
+        </div>
+        <AdressCard address={deliveryAddress}/>
+        <Button
+          sx={{ mt: 2, bgcolor: "RGB(145 85 253)" }}
+          size="large"
+          variant="contained"
+          onClick={handleDeliverySubmit}
+          fullWidth
+        >
+          Deliver Here
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div>
       <Grid container spacing={4}>
@@ -82,57 +133,7 @@ const DeliveryAddressForm = () => {
           lg={5}
           className="border rounded-e-md shadow-md h-[30.5rem] overflow-y-scroll mt-[30px]"
         >
-          {showAddressList ? (
-            <div className="p-5">
-              <Typography variant="h6" gutterBottom>
-                {addresses && addresses.length > 0 
-                  ? "Choose Delivery Address"
-                  : "No Saved Addresses"
-                }
-              </Typography>
-              {addresses && addresses.length > 0 ? (
-                addresses.map((addr) => (
-                  <div 
-                    key={addr.id} 
-                    className="border p-3 mb-4 cursor-pointer hover:border-primary"
-                    onClick={() => handleAddressSelect(addr)}
-                  >
-                    <AdressCard address={addr} />
-                  </div>
-                ))
-              ) : (
-                <Typography color="text.secondary" className="mt-2">
-                  You have no addresses saved. Please add a new address.
-                </Typography>
-              )}
-            </div>
-          ) : (
-            <div className="p-5 py-7 cursor-pointer">
-              <div className="flex justify-between items-center mb-4">
-                <Typography variant="h6">
-                  Delivery Address
-                </Typography>
-                {addresses && addresses.length > 0 && (
-                  <Button 
-                    variant="text" 
-                    onClick={() => setShowAddressList(true)}
-                  >
-                    Change
-                  </Button>
-                )}
-              </div>
-              <AdressCard address={deliveryAddress}/>
-              <Button
-                sx={{ mt: 2, bgcolor: "RGB(145 85 253)" }}
-                size="large"
-                variant="contained"
-                onClick={handleDeliverySubmit}
-                fullWidth
-              >
-                Deliver Here
-              </Button>
-            </div>
-          )}
+          {renderAddressSection()}
         </Grid>
 
         <Grid item xs={12} lg={7}>
@@ -165,8 +166,8 @@ const DeliveryAddressForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     required
-                    id="address"
-                    name="address"
+                    id="streetAddress"
+                    name="streetAddress"
                     label="Address"
                     fullWidth
                     autoComplete="given-Address"

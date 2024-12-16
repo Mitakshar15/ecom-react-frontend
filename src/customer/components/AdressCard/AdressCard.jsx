@@ -6,7 +6,7 @@ export const AdressCard = ({address}) => {
 
 <div className='space-y-3'>
     <p className='font-semibold'>{address.firstName +" " +address.lastName} </p>
-    <p>{address.address}
+    <p>{address.streetAddress}
        </p>
        <p>{address.city}, {address.state}{address.zipCode}, </p>
      <div className='space-y-1'>

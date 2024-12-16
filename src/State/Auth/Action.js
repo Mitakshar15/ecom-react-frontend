@@ -88,9 +88,7 @@ export const getUser = (token) => {
   };
 };
 
-export const logout = (token) => {
-  return async (dispatch) => {
-    dispatch({ type: LOGOUT });
-    localStorage.clear();
-  };
+export const logout = () => {
+  localStorage.removeItem("jwt");
+  return { type: "LOGOUT_SUCCESS" };
 };

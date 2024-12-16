@@ -10,7 +10,7 @@ export const OrderDetails = () => {
     <div className='px-5 lg:px-20 overflow-auto'>
         <div>
             <h1 className='font-bold text-xl py-7'>Delivery Adress</h1>
-        <AdressCard/>
+        {/* <AdressCard/> */}
         </div>
       <div className='py-20 border rounded-md '>
          <OrderTracker activeStep={3}/>

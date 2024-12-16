@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { AdressCard } from '../AdressCard/AdressCard'
 import { Button } from '@mui/material'
-import CartItem from '../Cart/CartItem'
 import { useDispatch, useSelector } from 'react-redux'
-import { confirmOrder, getOrderById } from '../../../State/Order/Action'
+import { confirmOrder, getOrderById, placeOrder } from '../../../State/Order/Action'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { removeAllCartItem } from '../../../State/Cart/Action'
+import OrderItemCard from '../Order/OrderItemCard'
 
 export const OrderSummary = () => {
   const [error, setError] = useState(null);
@@ -30,7 +30,7 @@ export const OrderSummary = () => {
   }, [orderId, dispatch]);
 
   const handleConfirmOrder = () => {
-    dispatch(confirmOrder(order.order.id))
+    dispatch(placeOrder(order.order.id))
     dispatch(removeAllCartItem(cart.cart?.id))
     navigate("/orderConfirmed")
   }
@@ -67,10 +67,12 @@ export const OrderSummary = () => {
 
       <div className="lg:grid lg:grid-cols-3 lg:gap-8">
         <div className="col-span-2 space-y-4">
-          <div className="bg-white p-6  rounded-lg border">
+          <div className="bg-white p-6 rounded-lg border">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Order Items</h2>
             <div className="space-y-4">
-              {order.order?.orderItemList?.map((item) => <CartItem key={item.id} item={item} />)}
+              {order.order?.orderItemList?.map((item) => (
+                <OrderItemCard key={item.id} item={item} />
+              ))}
             </div>
           </div>
         </div>
