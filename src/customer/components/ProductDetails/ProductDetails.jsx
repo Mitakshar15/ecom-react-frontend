@@ -70,6 +70,39 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const calculateRatingPercentages = (ratings) => {
+  if (!ratings || ratings.length === 0) {
+    return {
+      excellent: 0,
+      veryGood: 0,
+      good: 0,
+      average: 0,
+      poor: 0
+    };
+  }
+
+  let excellent = 0, veryGood = 0, good = 0, average = 0, poor = 0;
+  const total = ratings.length;
+
+  ratings.forEach(rating => {
+    const value = rating.rating;
+    if (value >= 4.5) excellent++;
+    else if (value >= 3.5) veryGood++;
+    else if (value >= 2.5) good++;
+    else if (value >= 1.5) average++;
+    else poor++;
+  });
+
+  // Convert to percentages
+  return {
+    excellent: Math.round((excellent / total) * 100),
+    veryGood: Math.round((veryGood / total) * 100),
+    good: Math.round((good / total) * 100),
+    average: Math.round((average / total) * 100),
+    poor: Math.round((poor / total) * 100)
+  };
+};
+
 export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState("");
   const navigate = useNavigate();
@@ -160,6 +193,8 @@ export default function ProductDetails() {
   dispatch(findProductById(data))  
   
   },[params.productId,dispatch])
+
+  const ratingStats = calculateRatingPercentages(products?.product?.ratings);
 
   return (
     <div className="bg-white lg:px-20 mt-[120px]">
@@ -473,7 +508,7 @@ export default function ProductDetails() {
                             <div className="flex items-center space-x-3 mb-6">
                                 <Rating 
                                     readOnly 
-                                    value={products?.product?.ratings || 0} 
+                                    value={avgRating|| 0} 
                                     precision={0.5}
                                     sx={{
                                         '& .MuiRating-iconFilled': {
@@ -489,11 +524,11 @@ export default function ProductDetails() {
                             {/* Rating Breakdown */}
                             <div className="space-y-4">
                                 {[
-                                    { label: 'Excellent', value: 40, color: 'success' },
-                                    { label: 'Very Good', value: 10, color: 'success' },
-                                    { label: 'Good', value: 20, color: 'info' },
-                                    { label: 'Average', value: 50, color: 'warning' },
-                                    { label: 'Poor', value: 80, color: 'error' },
+                                    { label: 'Excellent', value: ratingStats.excellent, color: 'success' },
+                                    { label: 'Very Good', value: ratingStats.veryGood, color: 'success' },
+                                    { label: 'Good', value: ratingStats.good, color: 'info' },
+                                    { label: 'Average', value: ratingStats.average, color: 'warning' },
+                                    { label: 'Poor', value: ratingStats.poor, color: 'error' },
                                 ].map((rating, index) => (
                                     <div className="flex items-center gap-4" key={index}>
                                         <span className="text-sm text-gray-600 w-20">{rating.label}</span>
