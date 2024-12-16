@@ -311,7 +311,7 @@ export default function ProductDetails() {
 
                 <div className="space-y-6">
                   <p className="text-base text-gray-900">
-                    {product.description}
+                    {products.product?.description}
                   </p>
                 </div>
               </div>
@@ -343,172 +343,225 @@ export default function ProductDetails() {
             </div>
           </div>
         </section>
-
+              
               {/* Quick Rating Section */}
-              <div className="mt-10 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Rate This Product</h3>
-                <form onSubmit={handleSubmitRating} className="space-y-4">
-                  <div className="flex flex-col space-y-2">
-                    <label className="text-sm text-gray-600">Your Rating</label>
-                    <div className="flex items-center space-x-4">
-                      <Rating
-                        name="quick-rating"
-                        value={reviewInput.rating}
-                        onChange={(event, newValue) => {
-                          setReviewInput(prev => ({...prev, rating: newValue}));
-                        }}
-                        precision={0.5}
-                        size="large"
-                      />
-                      <Button 
-                        type="submit"
-                        variant="contained" 
-                        size="medium"
-                        sx={{
-                          bgcolor:"#9155fd",
-                          "&:hover": { bgcolor: "#804dee" },
-                        }}
-                      >
-                        Submit Rating
-                      </Button>
-                    </div>
+              <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                  <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+                      <div className="px-8 py-6 border-b border-gray-200">
+                          <h3 className="text-xl font-semibold text-gray-900">Rate This Product</h3>
+                          <p className="mt-1 text-sm text-gray-500">
+                              Share your experience with this product
+                          </p>
+                      </div>
+                      
+                      <div className="px-8 py-6">
+                          <form onSubmit={handleSubmitRating} className="space-y-4">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                  <div className="space-y-2">
+                                      <label className="block text-sm font-medium text-gray-700">
+                                          Your Rating
+                                      </label>
+                                      <Rating
+                                          name="quick-rating"
+                                          value={reviewInput.rating}
+                                          onChange={(event, newValue) => {
+                                              setReviewInput(prev => ({...prev, rating: newValue}));
+                                          }}
+                                          precision={0.5}
+                                          size="large"
+                                          sx={{
+                                              fontSize: '2rem',
+                                              '& .MuiRating-iconFilled': {
+                                                  color: '#9155fd',
+                                              },
+                                          }}
+                                      />
+                                  </div>
+                                  
+                                  <Button 
+                                      type="submit"
+                                      variant="contained" 
+                                      size="large"
+                                      sx={{
+                                          bgcolor: "#9155fd",
+                                          "&:hover": { bgcolor: "#804dee" },
+                                          px: 4,
+                                          py: 1.5,
+                                          mt: { xs: 2, sm: 0 }
+                                      }}
+                                  >
+                                      Submit Rating
+                                  </Button>
+                              </div>
+                              
+                              <div className="mt-4 flex items-center space-x-2 text-sm text-gray-500">
+                                  <svg 
+                                      className="h-5 w-5 text-gray-400" 
+                                      fill="currentColor" 
+                                      viewBox="0 0 20 20"
+                                  >
+                                      <path 
+                                          fillRule="evenodd" 
+                                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" 
+                                          clipRule="evenodd" 
+                                      />
+                                  </svg>
+                                  <p>Your rating helps other shoppers make better decisions</p>
+                              </div>
+                          </form>
+                      </div>
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Your rating helps other shoppers make better decisions
-                  </p>
-                </form>
-              </div>
+              </section>
         {/* ratings and reviews */}
-<section className="p-6 bg-white rounded-lg shadow-lg">
-    <h1 className="font-bold text-2xl mb-6 text-gray-800">
-        Recent Reviews & Ratings
-    </h1>
-    <div className="rounded-lg p-6 bg-gray-50 bg-opacity-70">
-        <Grid container spacing={4}>
-            {/* Review Section */}
-            <Grid item xs={12} md={7}>
-                <div className="space-y-6">
-                    {products?.product?.reviews?.length > 0 ? (
-                        products.product.reviews.map((review, index) => (
-                            <ProductReviewCard key={index} review={review} />
-                        ))
-                    ) : (
-                        <div className="text-center py-10">
-                            <p className="text-gray-500 text-lg">No reviews yet. Be the first one to review!</p>
-                        </div>
-                    )}
-                </div>
-            </Grid>
-
-            {/* Ratings & Review Form Section */}
-            <Grid item xs={12} md={5} className="space-y-4">
-                {/* Rating Statistics */}
-                <Box className="space-y-4">
-                    <h2 className="text-xl font-semibold text-gray-700">Product Ratings</h2>
-                    {/* Overall Rating Display */}
-                    <div className="flex items-center space-x-3">
-                        <Rating 
-                            readOnly 
-                            value={products?.product?.ratings || 0} 
-                            precision={0.5} 
-                        />
-                        <p className="text-gray-600 text-sm">
-                            {products?.product?.ratings?.length || 0} Ratings
-                        </p>
+<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-200">
+            <h1 className="text-xl font-semibold text-gray-900">
+                Recent Reviews & Ratings
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+                What our customers are saying
+            </p>
+        </div>
+        
+        <div className="px-8 py-6">
+            <Grid container spacing={4}>
+                {/* Review Section */}
+                <Grid item xs={12} md={7}>
+                    <div className="space-y-6 pr-4 border-r border-gray-100">
+                        {products?.product?.reviews?.length > 0 ? (
+                            products.product.reviews.map((review, index) => (
+                                <ProductReviewCard key={index} review={review} />
+                            ))
+                        ) : (
+                            <div className="text-center py-10">
+                                <p className="text-gray-500 text-lg">No reviews yet. Be the first one to review!</p>
+                            </div>
+                        )}
                     </div>
+                </Grid>
 
-                    {/* Rating Breakdown */}
-                    <Box className="mt-6 space-y-4">
-                        {[
-                            { label: 'Excellent', value: 40, color: 'success' },
-                            { label: 'Very Good', value: 10, color: 'success' },
-                            { label: 'Good', value: 20, color: 'info' },
-                            { label: 'Average', value: 50, color: 'warning' },
-                            { label: 'Poor', value: 80, color: 'error' },
-                        ].map((rating, index) => (
-                            <Grid container alignItems="center" key={index}>
-                                <Grid item xs={3}>
-                                    <p className="text-gray-600">{rating.label}</p>
-                                </Grid>
-                                <Grid item xs={9}>
-                                    <LinearProgress
-                                        sx={{
-                                            bgcolor: '#e0e0e0',
-                                            '& .MuiLinearProgress-bar': {
-                                                bgcolor: rating.color === 'success' ? 'green' :
-                                                        rating.color === 'info' ? 'blue' :
-                                                        rating.color === 'warning' ? 'orange' :
-                                                        'red',
-                                            },
-                                            borderRadius: '4px',
-                                            height: '8px',
+                {/* Ratings & Review Form Section */}
+                <Grid item xs={12} md={5}>
+                    <div className="space-y-8">
+                        {/* Rating Statistics */}
+                        <div className="bg-gray-50 rounded-lg p-6">
+                            <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Ratings</h2>
+                            {/* Overall Rating Display */}
+                            <div className="flex items-center space-x-3 mb-6">
+                                <Rating 
+                                    readOnly 
+                                    value={products?.product?.ratings || 0} 
+                                    precision={0.5}
+                                    sx={{
+                                        '& .MuiRating-iconFilled': {
+                                            color: '#9155fd',
+                                        },
+                                    }}
+                                />
+                                <p className="text-gray-600 text-sm">
+                                    {products?.product?.ratings?.length || 0} Ratings
+                                </p>
+                            </div>
+
+                            {/* Rating Breakdown */}
+                            <div className="space-y-4">
+                                {[
+                                    { label: 'Excellent', value: 40, color: 'success' },
+                                    { label: 'Very Good', value: 10, color: 'success' },
+                                    { label: 'Good', value: 20, color: 'info' },
+                                    { label: 'Average', value: 50, color: 'warning' },
+                                    { label: 'Poor', value: 80, color: 'error' },
+                                ].map((rating, index) => (
+                                    <div className="flex items-center gap-4" key={index}>
+                                        <span className="text-sm text-gray-600 w-20">{rating.label}</span>
+                                        <div className="flex-grow">
+                                            <LinearProgress
+                                                sx={{
+                                                    bgcolor: '#e0e0e0',
+                                                    '& .MuiLinearProgress-bar': {
+                                                        bgcolor: rating.color === 'success' ? '#9155fd' :
+                                                                rating.color === 'info' ? '#9155fd' :
+                                                                rating.color === 'warning' ? '#f59e0b' :
+                                                                '#ef4444',
+                                                    },
+                                                    borderRadius: '4px',
+                                                    height: '8px',
+                                                }}
+                                                variant="determinate"
+                                                value={rating.value}
+                                            />
+                                        </div>
+                                        <span className="text-sm text-gray-500 w-12 text-right">{rating.value}%</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Review Form */}
+                        <div className="bg-gray-50 rounded-lg p-6">
+                            <h2 className="text-lg font-semibold text-gray-900 mb-4">Write a Review</h2>
+                            
+                            {/* Rating Input */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Rate this product *
+                                </label>
+                                <div className="flex items-center space-x-3">
+                                    <Rating
+                                        name="rating-input"
+                                        value={reviewInput.rating}
+                                        onChange={(event, newValue) => {
+                                            setReviewInput(prev => ({...prev, rating: newValue}));
                                         }}
-                                        variant="determinate"
-                                        value={rating.value}
+                                        precision={0.5}
+                                        size="large"
+                                        sx={{
+                                            '& .MuiRating-iconFilled': {
+                                                color: '#9155fd',
+                                            },
+                                        }}
                                     />
-                                </Grid>
-                            </Grid>
-                        ))}
-                    </Box>
-                </Box>
+                                    <span className="text-sm text-gray-500">
+                                        {reviewInput.rating > 0 ? `${reviewInput.rating} stars` : ''}
+                                    </span>
+                                </div>
+                            </div>
 
-                {/* Review Form - Now below rating statistics */}
-                <div className="mt-8  bg-transparent p-6 rounded-lg shadow-sm">
-                    <h2 className="text-xl font-semibold text-gray-800 mb-6">Write a Review</h2>
-                    
-                    {/* Rating Input */}
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Rate this product *
-                        </label>
-                        <div className="flex items-center space-x-3">
-                            <Rating
-                                name="rating-input"
-                                value={reviewInput.rating}
-                                onChange={(event, newValue) => {
-                                    setReviewInput(prev => ({...prev, rating: newValue}));
+                            {/* Review Input */}
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Your Review *
+                                </label>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    variant="outlined"
+                                    placeholder="What did you like or dislike? What did you use this product for?"
+                                    value={reviewInput.comment}
+                                    onChange={(e) => setReviewInput(prev => ({...prev, comment: e.target.value}))}
+                                />
+                            </div>
+
+                            <Button 
+                                onClick={handleSubmitReview}
+                                variant="contained" 
+                                fullWidth
+                                sx={{
+                                    bgcolor:"#9155fd",
+                                    "&:hover": { bgcolor: "#804dee" },
+                                    py: 1.5,
+                                    mt: 2
                                 }}
-                                precision={0.5}
-                                size="large"
-                            />
-                            <span className="text-sm text-gray-500">
-                                {reviewInput.rating > 0 ? `${reviewInput.rating} stars` : ''}
-                            </span>
+                            >
+                                Submit Review
+                            </Button>
                         </div>
                     </div>
-
-                    {/* Review Input */}
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Your Review *
-                        </label>
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            variant="outlined"
-                            placeholder="What did you like or dislike? What did you use this product for?"
-                            value={reviewInput.comment}
-                            onChange={(e) => setReviewInput(prev => ({...prev, comment: e.target.value}))}
-                        />
-                    </div>
-
-                    <Button 
-                        onClick={handleSubmitReview}
-                        variant="contained" 
-                        fullWidth
-                        sx={{
-                            bgcolor:"#9155fd",
-                            "&:hover": { bgcolor: "#804dee" },
-                            py: 1.5,
-                            mt: 2
-                        }}
-                    >
-                        Submit Review
-                    </Button>
-                </div>
+                </Grid>
             </Grid>
-        </Grid>
+        </div>
     </div>
 </section>
 
