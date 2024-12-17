@@ -9,6 +9,9 @@ const OrderConfirmedPage = () => {
   const handleGoToHome = () => {
     navigate('/');
   };
+  const handleGoToOrderDetails = () => {
+    navigate('/account/order');
+  };
 
   return (
     <Box
@@ -57,7 +60,7 @@ const OrderConfirmedPage = () => {
           variant="contained"
           color="primary"
           size="large"
-          onClick={handleGoToHome}
+          onClick={handleGoToOrderDetails}
           sx={{
             marginTop: '2rem',
             padding: '0.8rem 2rem',
@@ -66,7 +69,7 @@ const OrderConfirmedPage = () => {
             fontSize: '1.1rem',
           }}
         >
-          Return to Home
+          View your orders
         </Button>
       </Box>
     </Box>

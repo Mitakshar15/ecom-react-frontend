@@ -73,12 +73,7 @@ export const getOrderById = (orderId) => async (dispatch) => {
 export const getOrderHistory = (reqData) => async (dispatch, getState) => {
   try {
     dispatch({ type: GET_ORDER_HISTORY_REQUEST });
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${reqData.jwt}`,
-      },
-    };
+      
 
     const { data } = await apiConfig.get(`/api/orders/user`);
     console.log("order history -------- ", data);

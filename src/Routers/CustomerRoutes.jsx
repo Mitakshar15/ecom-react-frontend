@@ -30,7 +30,7 @@ export const CustomerRoutes = () => {
           <Route path="/account/order"  element={<Order/>}></Route>
           <Route path="/account/order/:orderId"  element={<OrderDetails/>}></Route>
           <Route path="/orderConfirmed" element={<OrderConfirmedPage/>}></Route>
-      
+          
 
       {/* <Order/> */}
       {/* <OrderDetails/> */}

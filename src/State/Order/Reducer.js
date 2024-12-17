@@ -60,20 +60,22 @@ import {
         };
         case GET_ORDER_HISTORY_REQUEST:
             return {
-
+              ...state,
               loading: true,
-              orders: [],
+              error: null
             };
           case GET_ORDER_HISTORY_SUCCESS:
+            
             return {
+              ...state,
               loading: false,
-              orders: action.payload,
+              orders: action.payload
             };
           case GET_ORDER_HISTORY_FAILURE:
             return {
+              ...state,
               loading: false,
-              error: action.payload,
-              orders: [],
+              error: action.payload
             };
       default:
         return state;

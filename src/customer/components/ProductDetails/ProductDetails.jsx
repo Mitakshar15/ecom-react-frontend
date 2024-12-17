@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Radio, RadioGroup } from "@headlessui/react";
-import { Box, Button, Grid, LinearProgress, Rating, TextField } from "@mui/material";
+import { Box, Button, Grid, LinearProgress, Rating, TextField, Pagination } from "@mui/material";
 import ProductReviewCard from "./ProductReviewCard";
 import { mens_kurta } from "../../../Data/Mens_kurta";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
@@ -116,6 +116,9 @@ export default function ProductDetails() {
     comment: "",
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 6;
+
   const handleAddToCart = () => {
     const data = {productId:params.productId,size:selectedSize.name}
     console.log("DATA",data)
@@ -195,6 +198,23 @@ export default function ProductDetails() {
   },[params.productId,dispatch])
 
   const ratingStats = calculateRatingPercentages(products?.product?.ratings);
+
+  const getCurrentPageReviews = () => {
+    if (!products?.product?.reviews) return [];
+    
+    // Sort reviews by createdAt date in descending order (latest first)
+    const sortedReviews = [...products.product.reviews].sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    return sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <div className="bg-white lg:px-20 mt-[120px]">
@@ -487,9 +507,35 @@ export default function ProductDetails() {
                 <Grid item xs={12} md={7}>
                     <div className="space-y-6 pr-4 border-r border-gray-100">
                         {products?.product?.reviews?.length > 0 ? (
-                            products.product.reviews.map((review, index) => (
-                                <ProductReviewCard key={index} review={review} />
-                            ))
+                            <>
+                                {getCurrentPageReviews().map((review, index) => (
+                                    <ProductReviewCard key={index} review={review} />
+                                ))}
+                                
+                                {/* Pagination */}
+                                {products.product.reviews.length > reviewsPerPage && (
+                                    <div className="flex justify-center mt-8">
+                                        <Pagination 
+                                            count={Math.ceil(products.product.reviews.length / reviewsPerPage)}
+                                            page={currentPage}
+                                            onChange={handlePageChange}
+                                            color="primary"
+                                            sx={{
+                                                '& .MuiPaginationItem-root': {
+                                                    color: '#9155fd',
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#9155fd !important',
+                                                    color: 'white',
+                                                },
+                                                '& .MuiPaginationItem-root:hover': {
+                                                    backgroundColor: '#9155fd20',
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="text-center py-10">
                                 <p className="text-gray-500 text-lg">No reviews yet. Be the first one to review!</p>
