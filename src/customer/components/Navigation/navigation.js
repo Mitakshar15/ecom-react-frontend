@@ -124,7 +124,15 @@ export const navigation = {
     },
   ],
   pages: [
-    { name: "Company", id: "/" },
-    { name: "Stores", id: "/" },
+    { name: 'Home', href: '/' },
+    { name: 'Products', href: '/products' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ],
+  profile: [
+    { name: 'My Profile', href: '/profile' },
+    { name: 'My Orders', href: '/account/order' },
+    { name: 'Wishlist', href: '/wishlist' },
+    { name: 'Settings', href: '/settings' },
+  ]
 };

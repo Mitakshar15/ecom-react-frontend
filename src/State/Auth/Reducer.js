@@ -9,6 +9,8 @@ import {
   GET_USER_FAILURE,
   LOGOUT,
   REGISTER_SUCCESS,
+  EDIT_USER_REQUEST,
+  EDIT_USER_SUCCESS,
 } from "./ActionType";
 
 const initialState = {
@@ -22,10 +24,13 @@ export const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case REGISTER_REQUEST:
     case LOGIN_REQUEST:
+    case EDIT_USER_REQUEST:
       return { ...state, isLoading: true, error: null };
 
     case REGISTER_SUCCESS:
       return { ...state, isLoading: false };
+    case EDIT_USER_SUCCESS:
+      return { ...state, isLoading: false, user: action.payload };
     case REGISTER_FAILURE:
     case LOGIN_FAILURE:
       return { ...state, isLoading: false, error: action.payload };

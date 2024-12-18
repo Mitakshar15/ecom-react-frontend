@@ -14,8 +14,8 @@ export const OrderCard = ({ order }) => {
 
   return (
     <div onClick={() => navigate(`/account/order/${order?.id}`)} className='p-5 shadow-md shadow-black-50 hover:shadow-2xl border'>
-      <p className="font-bold text-lg mb-2">Order ID: {order?.id}</p>
-      
+      <p className="font-bold text-xl mb-2">Order ID: {order?.id}</p>
+      <p className="text-sm mt-5 mb-10">Order Items </p>
       {order?.orderItemList?.map((item) => (
         <Grid container spacing={2} sx={{ justifyContent: "space-between" }} key={item._id} className="mb-4">
           <Grid item xs={6}>
@@ -47,8 +47,8 @@ export const OrderCard = ({ order }) => {
                 />
                 <span>
                   {order.orderStatus === 'DELIVERED'
-                    ? `Delivered on ${formatDate(order.deliveryDate)}`
-                    : `Expected Delivery on ${formatDate(order.expectedDeliveryDate)}`
+                    ? `Delivered on ${formatDate(order.createdAt)}`
+                    : `Expected Delivery on ${formatDate(order.createdAt)}`
                   }
                 </span>
               </p>

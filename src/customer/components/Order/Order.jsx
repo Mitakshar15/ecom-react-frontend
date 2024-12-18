@@ -21,7 +21,7 @@ export const Order = () => {
   const { orders, loading } = useSelector(store => store.order);
   const [page, setPage] = useState(1);
 
-  
+
   useEffect(() => {
     dispatch(getOrderHistory());
   }, [dispatch]);
@@ -101,6 +101,7 @@ export const Order = () => {
               </div>
             ) : (
               <div className="p-5 space-y-5">
+                <p className="text-start text-2xl">Track Your orders</p>
                 {currentOrders.map((order) => (
                   <OrderCard key={order.id} order={order}/>
                 ))}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_BASE_URL } from "../../config/apiConfig";
+import apiConfig, { API_BASE_URL } from "../../config/apiConfig";
 import {
   REGISTER_REQUEST,
   LOGIN_REQUEST,
@@ -11,6 +11,9 @@ import {
   GET_USER_FAILURE,
   LOGOUT,
   REGISTER_SUCCESS,
+  EDIT_USER_SUCCESS,
+  EDIT_USER_REQUEST,
+  EDIT_USER_FAILURE,
 } from "./ActionType";
 import { type } from "@testing-library/user-event/dist/type";
 
@@ -92,3 +95,17 @@ export const logout = () => {
   localStorage.removeItem("jwt");
   return { type: "LOGOUT_SUCCESS" };
 };
+
+
+export const editUser = (userData) => async (dispatch) =>{
+ 
+  dispatch({type: EDIT_USER_REQUEST});
+  try{
+    const response = await apiConfig.put(`${API_BASE_URL}/api/users/editProfile`, userData);
+    const user = response.data;
+    dispatch({type: EDIT_USER_SUCCESS, payload: user});
+  }catch(error){
+    dispatch({type: EDIT_USER_FAILURE, payload: error.message});
+  }
+
+}
