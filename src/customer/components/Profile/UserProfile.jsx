@@ -48,6 +48,7 @@ const UserProfile = () => {
   const { cart } = useSelector(store => store.cart);
   const [openEditForm, setOpenEditForm] = useState(false);
   const [openAddressForm, setOpenAddressForm] = useState(false);
+  const [addressUpdated, setAddressUpdated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +58,10 @@ const UserProfile = () => {
       dispatch(getOrderHistory());
       dispatch(get());
     }
-  }, [dispatch]);
+    if (addressUpdated) {
+      setAddressUpdated(false);
+    }
+  }, [dispatch, addressUpdated]);
 
   const sortedOrders = orders?.slice()?.sort((a, b) => 
     new Date(b.createdAt) - new Date(a.createdAt)
@@ -88,11 +92,17 @@ const UserProfile = () => {
 
   const handleCloseAddressForm = () => {
     setOpenAddressForm(false);
+  
   };
 
   const handleAddressSubmit = (addressData) => {
     dispatch(addAddress(addressData));
     handleCloseAddressForm();
+    setAddressUpdated(true);
+  };
+
+  const handleAddressUpdate = () => {
+    setAddressUpdated(true);
   };
 
   return (
@@ -337,10 +347,43 @@ const UserProfile = () => {
                   </IconButton>
                 </Box>
                 <Divider sx={{ mb: 2 }} />
-                <Stack spacing={2}>
+                <Stack 
+                  spacing={2} 
+                  sx={{ 
+                    maxHeight: '300px', 
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: '#f1f1f1',
+                      borderRadius: '10px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: '#888',
+                      borderRadius: '10px',
+                      '&:hover': {
+                        background: '#555',
+                      },
+                    },
+                    pr: 1 // Add padding for scrollbar
+                  }}
+                >
                   {auth.user?.addresses?.map((address, index) => (
-                    <AddressCard key={index} address={address} />
+                    <AddressCard 
+                      key={index} 
+                      address={{
+                        ...address,
+                        id: address._id || address.id
+                      }}
+                      onUpdate={handleAddressUpdate}
+                    />
                   ))}
+                  {auth.user?.addresses?.length === 0 && (
+                    <Typography color="text.secondary" textAlign="center" py={2}>
+                      No addresses added yet
+                    </Typography>
+                  )}
                 </Stack>
               </CardContent>
             </Card>
@@ -363,7 +406,7 @@ const UserProfile = () => {
               </Box>
               <Divider sx={{ mb: 3 }} />
               <Stack spacing={2} id="orders-section">
-                {sortedOrders?.slice(0, 2).map((order, index) => (
+                {sortedOrders?.slice(0, 3).map((order, index) => (
                   <OrderCard key={order._id || index} order={order} />
                 ))}
                 {sortedOrders?.length > 0 ? (
@@ -409,7 +452,7 @@ const UserProfile = () => {
         open={openAddressForm}
         handleClose={handleCloseAddressForm}
         handleSubmit={handleAddressSubmit}
-        userId={auth.user?._id}
+        userId={auth.user?.id}
       />
     </Container>
     </div>

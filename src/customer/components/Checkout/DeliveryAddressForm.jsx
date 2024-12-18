@@ -1,10 +1,18 @@
-import { Box, Button, Grid, Typography, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import { Box, Button, Grid, Typography, MenuItem } from "@mui/material";
+import React, { useState } from "react";
 import { AdressCard } from "../AdressCard/AdressCard";
 import { TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrder } from "../../../State/Order/Action";
 import { useNavigate } from "react-router-dom";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+// Import icons
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const DeliveryAddressForm = () => {
   const dispatch = useDispatch();
@@ -125,107 +133,195 @@ const DeliveryAddressForm = () => {
     );
   };
 
+  // Add Indian states list
+  const indianStates = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 
+    'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 
+    'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 
+    'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 
+    'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+  ];
+
+  // Add validation for postal code
+  const handlePostalCodeChange = (event) => {
+    const value = event.target.value.replace(/\D/g, ''); // Remove non-digits
+    event.target.value = value;
+  };
+
   return (
-    <div>
-      <Grid container spacing={4}>
+    <div className="max-w-7xl mx-auto p-3 bg-gray-50">
+      <Grid container spacing={3}>
+        {/* Left Section - Address List */}
         <Grid
+          item
           xs={12}
           lg={5}
-          className="border rounded-e-md shadow-md h-[30.5rem] overflow-y-scroll mt-[30px]"
         >
-          {renderAddressSection()}
+          <Box className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+            <div className="border-b border-gray-100 bg-white p-4">
+              <Typography variant="h6" className="flex items-center gap-2 text-gray-700">
+                <LocalShippingOutlinedIcon className="text-primary" />
+                Saved Delivery Addresses
+              </Typography>
+            </div>
+            <div className="max-h-[475px] overflow-y-auto">
+              {renderAddressSection()}
+            </div>
+          </Box>
         </Grid>
 
+        {/* Right Section - Add New Address Form */}
         <Grid item xs={12} lg={7}>
-          <Box className="border rounded-s-md shadow-md p-5">
-            <Typography variant="h6" gutterBottom>
-              Add New Address
-            </Typography>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="firstName"
-                    name="firstName"
-                    label="First Name"
-                    fullWidth
-                    autoComplete="given-Name"
-                  />
+          <Box className="bg-white rounded-lg shadow-md border border-gray-100">
+            <div className="border-b border-gray-100 p-4">
+              <Typography variant="h6" className="flex items-center gap-2 text-gray-700">
+                <HomeOutlinedIcon className="text-primary" />
+                Add New Delivery Address
+              </Typography>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-4">
+              {/* Personal Details Section */}
+              <div className="mb-4">
+                <Typography variant="subtitle2" className="flex items-center gap-2 mb-3 text-gray-600">
+                  <PersonOutlineIcon className="text-primary" />
+                  Personal Details
+                </Typography>
+                
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="firstName"
+                      name="firstName"
+                      label="First Name"
+                      fullWidth
+                      variant="outlined"
+                      size="medium"
+                      className="bg-gray-50/30"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="lastName"
+                      name="lastName"
+                      label="Last Name"
+                      fullWidth
+                      variant="outlined"
+                      size="medium"
+                      className="bg-gray-50/30"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="lastName"
-                    name="lastName"
-                    label="Last Name"
-                    fullWidth
-                    autoComplete="given-Name"
-                  />
+              </div>
+
+              {/* Address Details Section */}
+              <div className="mb-4">
+                <Typography variant="subtitle2" className="flex items-center gap-2 mb-3 text-gray-600">
+                  <LocationOnOutlinedIcon className="text-primary" />
+                  Address Details
+                </Typography>
+                
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      id="streetAddress"
+                      name="streetAddress"
+                      label="Street Address"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      variant="outlined"
+                      className="bg-gray-50/30"
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="city"
+                      name="city"
+                      label="City"
+                      fullWidth
+                      variant="outlined"
+                      className="bg-gray-50/30"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="state"
+                      name="state"
+                      label="State"
+                      select
+                      fullWidth
+                      defaultValue=""
+                      variant="outlined"
+                      className="bg-gray-50/30"
+                    >
+                      {indianStates.map((state) => (
+                        <MenuItem key={state} value={state}>
+                          {state}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="zipCode"
+                      name="zipCode"
+                      label="Postal Code"
+                      fullWidth
+                      variant="outlined"
+                      className="bg-gray-50/30"
+                      inputProps={{ 
+                        maxLength: 6,
+                        pattern: "[0-9]*",
+                        inputMode: "numeric"
+                      }}
+                      onChange={handlePostalCodeChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <PhoneInput
+                      country={'in'}
+                      value={deliveryAddress.mobile}
+                      onChange={phone => setDeliveryAddress({...deliveryAddress, mobile: phone})}
+                      inputProps={{
+                        required: true,
+                        name: 'phoneNumber'
+                      }}
+                      containerClass="!w-full"
+                      inputClass="!w-full !h-[56px] !bg-gray-50/30 !text-gray-900 !text-base !border-gray-200"
+                      buttonClass="!bg-gray-50/30 !border-gray-200"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="streetAddress"
-                    name="streetAddress"
-                    label="Address"
-                    fullWidth
-                    autoComplete="given-Address"
-                    multiline
-                    rows={4}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="city"
-                    name="city"
-                    label="City"
-                    fullWidth
-                    autoComplete="given-Name"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="state"
-                    name="state"
-                    label="State/Province/Region"
-                    fullWidth
-                    autoComplete="given-Name"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="zipCode"
-                    name="zipCode"
-                    label="Zip / Postal Code"
-                    fullWidth
-                    autoComplete="shipping-postal-code"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    label="Phone Number"
-                    fullWidth
-                    autoComplete="given-Number"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Button
-                    sx={{py:2, mt: 2, bgcolor: "RGB(145 85 253)" }}
-                    size="large"
-                    variant="contained"
-                    type="submit"
-                  >
-                    Save
-                  </Button>
-                </Grid>
-              </Grid>
+              </div>
+
+              {/* Action Button */}
+              <div className="flex justify-end mt-4 pt-3 border-t border-gray-100">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    bgcolor: "RGB(145 85 253)",
+                    py: 1.5,
+                    '&:hover': {
+                      bgcolor: "RGB(135 75 243)"
+                    }
+                  }}
+                >
+                  Save Address
+                </Button>
+              </div>
             </form>
           </Box>
         </Grid>

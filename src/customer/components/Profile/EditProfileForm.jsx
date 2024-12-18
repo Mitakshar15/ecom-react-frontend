@@ -36,17 +36,27 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
         firstName: userData.firstName || '',
         lastName: userData.lastName || '',
         email: userData.email || '',
-        mobile: userData.mobile || '',
+        mobile: userData.mobile ? userData.mobile.replace('+91', '') : '',
         id: userData.id || ''
       });
     }
   }, [userData, open]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    if (e.target.name === 'mobile') {
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      if (value.length <= 10) {
+        setFormData({
+          ...formData,
+          mobile: value
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value
+      });
+    }
   };
 
   const onSubmit = (e) => {
@@ -54,6 +64,7 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
     const token = localStorage.getItem("jwt");
     handleSubmit({
       ...formData,
+      mobile: formData.mobile ? `+91${formData.mobile}` : '',
       jwt: token,
       userId: userData.id
     });
@@ -78,7 +89,7 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
         m: 0, 
         p: 2, 
         bgcolor: '#EDE7F6',
-        color: '#5E35B1',
+        color: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -187,7 +198,7 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
                   bgcolor: 'transparent',
                   '&:hover': { cursor: 'not-allowed' },
                   '& input': {
-                    color: '#9C27B0',
+                    color: '#000000',
                   },
                   '& .MuiOutlinedInput-notchedOutline': {
                     borderStyle: 'dashed',
@@ -197,7 +208,7 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
               }}
               helperText={
                 <Typography variant="caption" sx={{ 
-                  color: '#BA68C8',
+                  color: 'red',
                   fontSize: '0.7rem',
                   fontStyle: 'italic'
                 }}>
@@ -225,7 +236,10 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Phone sx={{ color: '#4527A0' }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Phone sx={{ color: '#4527A0' }} />
+                      <Typography sx={{ color: '#666', fontSize: '0.9rem' }}>+91</Typography>
+                    </Box>
                   </InputAdornment>
                 ),
               }}
@@ -241,7 +255,16 @@ const EditProfileForm = ({ open, handleClose, userData, handleSubmit }) => {
                   }
                 }
               }}
-              placeholder="Enter your mobile number"
+              placeholder="Enter 10 digit mobile number"
+              inputProps={{
+                maxLength: 10,
+                pattern: '[0-9]*'
+              }}
+              helperText={
+                <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+                  Please enter a 10-digit mobile number
+                </Typography>
+              }
             />
           </Stack>
         </DialogContent>
