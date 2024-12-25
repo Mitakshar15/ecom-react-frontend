@@ -1,8 +1,8 @@
 import axios from 'axios';
-const DEPLOYED='https://e-commerce-server-production-0873.up.railway.app'
+const DEPLOYED='https://ecom-backend-api-production.up.railway.app'
 const LOCALHOST='http://localhost:5454'
 
-export const API_BASE_URL = LOCALHOST
+export const API_BASE_URL = DEPLOYED
 
 const apiConfig = axios.create({
   baseURL: API_BASE_URL,
