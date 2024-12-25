@@ -48,7 +48,7 @@ export const OrderCard = ({ order }) => {
                 <span>
                   {order.orderStatus === 'DELIVERED'
                     ? `Delivered on ${formatDate(order.createdAt)}`
-                    : `Expected Delivery on ${formatDate(order.createdAt)}`
+                    : `Expected Delivery on ${formatDate(order.deliveryDate)}`
                   }
                 </span>
               </p>

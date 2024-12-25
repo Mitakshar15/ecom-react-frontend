@@ -1,47 +1,77 @@
-import { Alert, Button, Grid, Snackbar, TextField } from "@mui/material";
+import { Alert, Button, Grid, Snackbar, TextField, Typography, Box, InputAdornment, IconButton } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getUser, register } from "../../State/Auth/Action";
-import { store } from "../../State/store";
+import { authStyles } from './AuthStyles';
+import EmailIcon from '@mui/icons-material/Email';
+import PersonIcon from '@mui/icons-material/Person';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const jwt = localStorage.getItem("jwt");
   const { auth } = useSelector((store) => store);
   const handleClose = () => setOpenSnackBar(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
     if (jwt) {
       dispatch(getUser(jwt));
     }
     if (auth.user || auth.error) {
-      setOpenSnackBar(true);
+      setOpenSnackBar(false);
     }
-  }, [jwt,auth.user, auth.error]);
-
+  }, [jwt, auth.user, auth.error]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    
+    const password = data.get("password");
+    const confirmPassword = data.get("confirmPassword");
+    
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    
+    setPasswordError("");
 
     const userData = {
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
       email: data.get("email"),
-      password: data.get("password"),
+      mobile: data.get("phone"),
+      password: password,
     };
 
     dispatch(register(userData));
+  };
 
-    console.log(userData);
-    console.log("AUTH",auth);
+  const handleNavigateToLogin = () => {
+    setOpenSnackBar(false);
+    navigate("/login");
   };
 
   return (
-    <div>
+    <Box sx={authStyles.formContainer}>
+      <Box sx={authStyles.title}>
+        <Typography variant="h5" component="h1" fontWeight="600" gutterBottom>
+          Create Account
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Please fill in your information below
+        </Typography>
+      </Box>
+
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -52,6 +82,14 @@ export const RegisterForm = () => {
               label="First Name"
               fullWidth
               autoComplete="given-name"
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -61,7 +99,15 @@ export const RegisterForm = () => {
               name="lastName"
               label="Last Name"
               fullWidth
-              autoComplete="given-name"
+              autoComplete="family-name"
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -70,8 +116,40 @@ export const RegisterForm = () => {
               id="email"
               name="email"
               label="Email"
+              type="email"
               fullWidth
-              autoComplete="given-name"
+              autoComplete="email"
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              id="phone"
+              name="phone"
+              label="Phone Number"
+              type="tel"
+              fullWidth
+              autoComplete="tel"
+              inputProps={{
+                pattern: "[0-9]{10}",
+              }}
+              helperText="Please enter a valid 10-digit phone number"
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PhoneIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -80,35 +158,95 @@ export const RegisterForm = () => {
               id="password"
               name="password"
               label="Password"
+              type={showPassword ? 'text' : 'password'}
               fullWidth
-              autoComplete="password"
+              autoComplete="new-password"
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              id="confirmPassword"
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              fullWidth
+              error={!!passwordError}
+              helperText={passwordError}
+              sx={authStyles.inputField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12}>
             <Button
-              className="bg-[#9155FD] w-full"
+              fullWidth
               type="submit"
               variant="contained"
               size="large"
-              sx={{ padding: ".8rem o", bgcolor: "#9155FD" }}
+              sx={authStyles.submitButton}
             >
-              Register
+              Create Account
             </Button>
           </Grid>
         </Grid>
       </form>
-      <div className="flex justify-center flex-col items-center">
-        <div className="py-3 flex items-center">
-          <p>if you alredy have an account </p>
+
+      <Box sx={{ mt: 3, textAlign: 'center' }}>
+        <Typography sx={authStyles.linkText}>
+          Already have an account?{' '}
           <Button
-            onClick={() => navigate("/login")}
-            className="ml-5"
-            size="small"
+            onClick={handleNavigateToLogin}
+            sx={{ 
+              ml: 1,
+              color: '#9155FD',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'transparent',
+                color: '#804DE2'
+              }
+            }}
           >
-            Login
+            Sign In
           </Button>
-        </div>
-      </div>
+        </Typography>
+      </Box>
+
       <Snackbar
         open={openSnackBar}
         autoHideDuration={6000}
@@ -126,6 +264,6 @@ export const RegisterForm = () => {
             : "Registration Successful"}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 };

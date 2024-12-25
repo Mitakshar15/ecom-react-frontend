@@ -4,6 +4,7 @@ import {applyMiddleware, combineReducers, legacy_createStore} from "redux";
 import { customerProductReducer } from "./Product/Reducer";
 import { cartReducer } from "./Cart/Reducer";
 import { orderReducer } from "./Order/Reducer";
+import addressReducer from "./Address/Reducer";
 
 
 const rootReducers=combineReducers({
@@ -12,7 +13,7 @@ const rootReducers=combineReducers({
       products: customerProductReducer,
       cart : cartReducer,
       order: orderReducer,
-  
+      address:addressReducer,
   });
 
 

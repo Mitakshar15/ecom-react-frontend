@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Typography, MenuItem } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AdressCard } from "../AdressCard/AdressCard";
 import { TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +13,14 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { getUserAddress } from "../../../State/Address/Action";
+
 
 const DeliveryAddressForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {auth} = useSelector(store => store);
+  const {address} = useSelector(store => store.address);
   const [deliveryAddress, setDeliveryAddress] = useState({
     firstName: "",
     lastName: "",
@@ -45,7 +48,9 @@ const DeliveryAddressForm = () => {
     setSelectedAddressId(selectedAddress.id);
     setShowAddressList(false);
   };
-
+  useEffect(() => {
+    dispatch(getUserAddress());
+   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -82,11 +87,11 @@ const DeliveryAddressForm = () => {
       return (
         <div className="p-5">
           <Typography variant="h6" gutterBottom>
-            {addresses.length > 0 ? "Choose Delivery Address" : "No Saved Addresses"}
+            {address.length > 0 ? "Choose Delivery Address" : "No Saved Addresses"}
           </Typography>
           
-          {addresses.length > 0 ? (
-            addresses.map((addr) => (
+          {address.length > 0 ? (
+            address.map((addr) => (
               <div 
                 key={addr.id} 
                 className="border p-3 mb-4 cursor-pointer hover:border-primary"

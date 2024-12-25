@@ -14,6 +14,7 @@ import {
   EDIT_USER_SUCCESS,
   EDIT_USER_REQUEST,
   EDIT_USER_FAILURE,
+  CLEAR_AUTH_ERROR,
 } from "./ActionType";
 import { type } from "@testing-library/user-event/dist/type";
 
@@ -109,3 +110,7 @@ export const editUser = (userData) => async (dispatch) =>{
   }
 
 }
+
+export const clearAuthError = () => ({
+  type: CLEAR_AUTH_ERROR
+});

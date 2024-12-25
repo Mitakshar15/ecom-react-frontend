@@ -39,7 +39,8 @@ import EditProfileForm from './EditProfileForm';
 import { editUser } from '../../../State/Auth/Action';
 import { Link, useNavigate } from 'react-router-dom';
 import AddAddressForm from './AddAddressForm';
-import { addAddress } from '../../../State/Address/Action';
+import { addAddress, getUserAddress } from '../../../State/Address/Action';
+import { store } from '../../../State/store';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -50,13 +51,14 @@ const UserProfile = () => {
   const [openAddressForm, setOpenAddressForm] = useState(false);
   const [addressUpdated, setAddressUpdated] = useState(false);
   const navigate = useNavigate();
-
+  const {address} = useSelector(store=>store.address);
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if(jwt) {
       dispatch(getUser(jwt));
       dispatch(getOrderHistory());
       dispatch(get());
+      dispatch(getUserAddress())
     }
     if (addressUpdated) {
       setAddressUpdated(false);
@@ -369,7 +371,7 @@ const UserProfile = () => {
                     pr: 1 // Add padding for scrollbar
                   }}
                 >
-                  {auth.user?.addresses?.map((address, index) => (
+                  {address.map((address, index) => (
                     <AddressCard 
                       key={index} 
                       address={{

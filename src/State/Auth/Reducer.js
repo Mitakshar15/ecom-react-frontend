@@ -11,6 +11,7 @@ import {
   REGISTER_SUCCESS,
   EDIT_USER_REQUEST,
   EDIT_USER_SUCCESS,
+  CLEAR_AUTH_ERROR,
 } from "./ActionType";
 
 const initialState = {
@@ -55,6 +56,11 @@ export const authReducer = (state = initialState, action) => {
     case LOGOUT:
       localStorage.removeItem("jwt");
       return { ...state, jwt: null, user: null };
+    case CLEAR_AUTH_ERROR:
+      return {
+        ...state,
+        error: null
+      };
     default:
       return state;
   }
