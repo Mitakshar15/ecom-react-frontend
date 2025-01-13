@@ -406,7 +406,7 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5 rounded-md">
-                  { products.products && products.products?.content?.map((item) => (
+                  { products && products.products.map((item) => (
                     <ProductCard product={item} />
                   ))}
                 </div>

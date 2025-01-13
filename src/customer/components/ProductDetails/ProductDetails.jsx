@@ -120,7 +120,7 @@ export default function ProductDetails() {
   const reviewsPerPage = 6;
 
   const handleAddToCart = () => {
-    const data = {productId:params.productId,size:selectedSize.name}
+    const data = {productId:params.productId,size:selectedSize.name,quantity:1}
     console.log("DATA",data)
    dispatch(addItemToCart(data))
 

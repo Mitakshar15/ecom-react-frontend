@@ -13,7 +13,7 @@ const {cart} = useSelector(store=>store);
 
   const handleUpdateCartItem = async (num) => {
     try {
-      const data = {data:{quantity:item.quantity+num}, cartItemId:item?.id}
+      const data = {data:{quantity:num},cartItemId:item?.id}
       await dispatch(updateCartItem(data));
     } catch (error) {
       console.error("Failed to update quantity:", error);

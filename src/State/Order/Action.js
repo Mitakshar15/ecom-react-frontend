@@ -24,7 +24,7 @@ export const createOrder = (reqData) => async (dispatch) => {
     dispatch({ type: CREATE_ORDER_REQUEST });
     
     const { data } = await apiConfig.post(
-      `/api/orders/`,
+      `/v1/user/order/create`,
       reqData.address,
      
     );
