@@ -35,7 +35,7 @@ export const addItemToCart = (reqData) => async (dispatch) => {
   try {
     const { data } = await apiConfig.put("/v1/user/cart/add", reqData);
     console.log("INSID ADD ITM TO CART ACTION",data)
-    dispatch({ type: ADD_ITEM_TO_CART_SUCCESS, payload: data });
+    dispatch({ type: ADD_ITEM_TO_CART_SUCCESS, payload: data.data });
   } catch (error) {
     dispatch({ type: ADD_ITEM_TO_CART_FAILURE, payload: error.message });
   }
@@ -60,16 +60,16 @@ export const updateCartItem = (reqData) => async (dispatch) => {
       `/v1/user/cart/item/${reqData.cartItemId}/${reqData.data.quantity}`,
       reqData.data
     );
-    dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data });
+    dispatch({ type: UPDATE_CART_ITEM_SUCCESS, payload: data.data });
   } catch (error) {
     dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: error.message });
   }
 };
 
-export const removeAllCartItem = (reqData) => async (dispatch) => {
+export const removeAllCartItem = () => async (dispatch) => {
   dispatch({type: REMOVE_ALL_CART_ITEM_REQUEST});
   try {
-    const {data} = await apiConfig.delete(`/api/cart_items/removeAllItem/${reqData}`);
+    const {data} = await apiConfig.delete(`/v1/user/cart/clear`);
     dispatch({type: REMOVE_ALL_CART_ITEM_SUCCESS, payload: data});
   } catch (error) {
     dispatch({type: REMOVE_ALL_CART_ITEM_FAILURE, payload: error.message});

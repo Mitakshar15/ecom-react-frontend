@@ -100,34 +100,44 @@ export default function Product() {
     console.log("QUERY",query);
   }
 
-  useEffect(()=>{
-    
-    const [minPrice, maxPrice] = priceValue === null?[0,10000]: priceValue.split("-").map(Number);
-
-     const data={
-    category: params.lavelThree || "",
-    colors:colorValue ||[],
-    sizes:sizeValue ||[],
-    minPrice,
-    maxPrice,
-    minDiscount: discountValue || 0,
-    stock: stock || null,
-    sort: sortValue || "price_low",
-    pageNumber: pageNumber -1,
-    pageSize : 10,
-    }
-
-    dispatch(findProducts(data))
-
-  },[params.levelThree,
-    colorValue,
-    sizeValue,
-    priceValue,
-    discountValue,
-    sortValue,
-    pageNumber,
-    stock]
-);
+  useEffect(() => {
+    const fetchProducts = () => {
+      const [minPrice, maxPrice] = priceValue === null ? [0, 10000] : priceValue.split("-").map(Number);
+  
+      const data = {
+        category: params.lavelThree || "",
+        colors: colorValue || [],
+        sizes: sizeValue || [],
+        minPrice,
+        maxPrice,
+        minDiscount: discountValue || 0,
+        stock: stock || null,
+        sort: sortValue || "price_low",
+        pageNumber: pageNumber - 1,
+        pageSize: 10,
+      };
+  
+      dispatch(findProducts(data));
+    };
+  
+    // Create a debounced version of fetchProducts
+    const debouncedFetch = setTimeout(fetchProducts, 300);
+  
+    // Cleanup function
+    return () => clearTimeout(debouncedFetch);
+  }, [
+    // Combine all parameters into a single dependency string
+    JSON.stringify({
+      levelThree: params.levelThree,
+      color: colorValue,
+      size: sizeValue,
+      price: priceValue,
+      discount: discountValue,
+      sort: sortValue,
+      page: pageNumber,
+      stock
+    })
+  ]);
 
 
 

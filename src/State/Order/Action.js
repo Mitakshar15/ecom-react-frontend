@@ -28,8 +28,8 @@ export const createOrder = (reqData) => async (dispatch) => {
       reqData.address,
      
     );
-    if (data.id) {
-      reqData.navigate({ search: `step=3&order_id=${data.id}` });
+    if (data.order.id) {
+      reqData.navigate({ search: `step=3&order_id=${data.order.id}` });
     }
     console.log("created order - ", data);
     dispatch({
@@ -75,11 +75,11 @@ export const getOrderHistory = (reqData) => async (dispatch, getState) => {
     dispatch({ type: GET_ORDER_HISTORY_REQUEST });
       
 
-    const { data } = await apiConfig.get(`/api/orders/user`);
+    const { data } = await apiConfig.get(`/v1/user/order/allOrders`);
     console.log("order history -------- ", data);
     dispatch({
       type: GET_ORDER_HISTORY_SUCCESS,
-      payload: data,
+      payload: data.order_history,
     });
   } catch (error) {
     dispatch({
@@ -117,7 +117,7 @@ dispatch({type: CONFIRM_ORDER_REQUEST});
 export const placeOrder = (orderId) => async (dispatch) => {
   dispatch({type: PLACE_ORDER_REQUEST});
    try {
-    const   {data} = await apiConfig.put(`/api/admin/orders/${orderId}/placed`);
+    const   {data} = await apiConfig.put(`/v1/admin/orders/placeOrder/${orderId}`);
   
     console.log("Place order ", data);
     

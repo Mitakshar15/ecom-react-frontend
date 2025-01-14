@@ -13,25 +13,25 @@ export const OrderSummary = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get('order_id');
-  const { order } = useSelector(store => store);
+  const { order } = useSelector(store => store.order);
   const navigate = useNavigate();
   const { cart } = useSelector(store => store);
 
-  useEffect(() => {
-    if (orderId) {
-      dispatch(getOrderById(orderId))
-        .catch(err => {
-          setError("Failed to load order details. Please try again.");
-          console.error("Error loading order:", err);
-        });
-    } else {
-      setError("No order ID found");
-    }
-  }, [orderId, dispatch]);
+  // useEffect(() => {
+  //   if (orderId) {
+  //     dispatch(getOrderById(orderId))
+  //       .catch(err => {
+  //         setError("Failed to load order details. Please try again.");
+  //         console.error("Error loading order:", err);
+  //       });
+  //   } else {
+  //     setError("No order ID found");
+  //   }
+  // }, [orderId, dispatch]);
 
   const handleConfirmOrder = () => {
     dispatch(placeOrder(order.order.id))
-    dispatch(removeAllCartItem(cart.cart?.id))
+    dispatch(removeAllCartItem())
     navigate("/orderConfirmed")
   }
 

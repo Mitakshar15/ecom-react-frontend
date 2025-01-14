@@ -24,8 +24,8 @@ const OrderItemCard = ({ item }) => {
           
           <div className="flex items-center space-x-3 mt-2">
             <p className="font-semibold">${item.price}</p>
-            <p className="line-through opacity-50">${item.product.price}</p>
-            <p className="text-green-600 font-semibold">{item.product.discountPersent}% off</p>
+            <p className="line-through opacity-50">${item.product?.price}</p>
+            <p className="text-green-600 font-semibold">{item.product?.discountPersent}% off</p>
           </div>
           
           <p className="text-gray-600 mt-2">Quantity: {item.quantity}</p>

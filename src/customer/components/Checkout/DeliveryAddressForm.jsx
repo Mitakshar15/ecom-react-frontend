@@ -71,7 +71,8 @@ const DeliveryAddressForm = () => {
     dispatch(addAddress(newAddress));
     // Here you would typically dispatch an action to save the address to backend
     // dispatch(saveAddress(newAddress));
-    e.currentTarget.reset();
+    
+    e.target.reset();
   };
 
   const handleDeliverySubmit = () => {
