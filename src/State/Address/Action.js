@@ -5,7 +5,7 @@ export const addAddress = (reqData) => async (dispatch) => {
     dispatch({ type: ADD_ADDRESS_REQUEST });
 
     try {
-        const res = await apiConfig.post('/api/users/address/edit', reqData);
+        const res = await apiConfig.post('/v1/user/address/add',reqData);
         dispatch({ type: ADD_ADDRESS_SUCCESS, payload: res.data });
     } catch (error) {
         dispatch({ type: ADD_ADDRESS_FAILURE, payload: error.message });
@@ -29,7 +29,7 @@ export const editAddress = (reqData,addressId) => async (dispatch) => {
     dispatch({ type: EDIT_ADDRESS_REQUEST });
 
     try {
-        const res = await apiConfig.put(`/api/users/address/edit/${addressId}`, reqData);
+        const res = await apiConfig.put(`/v1/user/address/edit/${addressId}`, reqData);
         dispatch({ type: EDIT_ADDRESS_SUCCESS, payload: res.data });
     } catch (error) {
         dispatch({ type: EDIT_ADDRESS_FAILURE, payload: error.message });
@@ -40,7 +40,7 @@ export const getUserAddress = () => async (dispatch) => {
     dispatch({ type: GET_USER_ADDRESS_REQUEST });
 
     try {
-        const res = await apiConfig.get('/api/users/address');
+        const res = await apiConfig.get('/v1/user/address');
         dispatch({ type: GET_USER_ADDRESS_SUCCESS, payload: res.data });
     } catch (error) {
         dispatch({ type: GET_USER_ADDRESS_FAILURE, payload: error.message });

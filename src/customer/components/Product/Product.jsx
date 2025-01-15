@@ -50,8 +50,10 @@ export default function Product() {
   const navigate = useNavigate();
   const params  = useParams();
   const dispatch = useDispatch();
-  const {products} = useSelector((store)=>store);
+  const { products} = useSelector((store) => store);
 
+  const  totalItems = products.totalItems;
+  console.log("TOTAL ITEMS:" + totalItems);
   const decodedQueryString = decodeURIComponent(location.search);
   const searchParams = new URLSearchParams(decodedQueryString);
   const colorValue  = searchParams.get("color");
@@ -61,7 +63,7 @@ export default function Product() {
   const sortValue = searchParams.get("sort");
   const pageNumber = searchParams.get("page") || 1;
   const stock = searchParams.get("stock");
-
+  const totalPages = Math.ceil(totalItems / 10); // assuming pageSize is 10
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
 
@@ -100,34 +102,44 @@ export default function Product() {
     console.log("QUERY",query);
   }
 
-  useEffect(()=>{
-    
-    const [minPrice, maxPrice] = priceValue === null?[0,10000]: priceValue.split("-").map(Number);
-
-     const data={
-    category: params.lavelThree || "",
-    colors:colorValue ||[],
-    sizes:sizeValue ||[],
-    minPrice,
-    maxPrice,
-    minDiscount: discountValue || 0,
-    stock: stock || null,
-    sort: sortValue || "price_low",
-    pageNumber: pageNumber -1,
-    pageSize : 10,
-    }
-
-    dispatch(findProducts(data))
-
-  },[params.levelThree,
-    colorValue,
-    sizeValue,
-    priceValue,
-    discountValue,
-    sortValue,
-    pageNumber,
-    stock]
-);
+  useEffect(() => {
+    const fetchProducts = () => {
+      const [minPrice, maxPrice] = priceValue === null ? [0, 10000] : priceValue.split("-").map(Number);
+  
+      const data = {
+        category: params.lavelThree || "",
+        colors: colorValue || [],
+        sizes: sizeValue || [],
+        minPrice,
+        maxPrice,
+        minDiscount: discountValue || 0,
+        stock: stock || null,
+        sort: sortValue || "price_low",
+        pageNumber: pageNumber,
+        pageSize: 10,
+      };
+  
+      dispatch(findProducts(data));
+    };
+  
+    // Create a debounced version of fetchProducts
+    const debouncedFetch = setTimeout(fetchProducts, 300);
+  
+    // Cleanup function
+    return () => clearTimeout(debouncedFetch);
+  }, [
+    // Combine all parameters into a single dependency string
+    JSON.stringify({
+      levelThree: params.levelThree,
+      color: colorValue,
+      size: sizeValue,
+      price: priceValue,
+      discount: discountValue,
+      sort: sortValue,
+      page: pageNumber,
+      stock
+    })
+  ]);
 
 
 
@@ -406,8 +418,8 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5 rounded-md">
-                  { products.products && products.products?.content?.map((item) => (
-                    <ProductCard product={item} />
+                  { products && products.products.map((item) => (
+                    <ProductCard key={item.id} product={item} />
                   ))}
                 </div>
               </div>
@@ -417,7 +429,7 @@ export default function Product() {
 <section className="w-full px=[3.6rem]">
   <div className="px-4 py-5 flex justify-center">
     <Pagination 
-      count={products.products?.totalPages} 
+      count={totalPages} 
       color="secondary" 
       onChange={(e, value) => handlePaginationChange(value)} 
     />

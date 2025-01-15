@@ -16,13 +16,13 @@ export const CustomerRoutes = () => {
   return (
     <div>
       <div>
-        <Navigation />
+        <Navigation/>
       </div>
       <Routes>
       <Route path="/login" element={<HomePage />}/>
       <Route path="/register" element={<HomePage />}/>
 
-          <Route path="/" element={<HomePage />}/>
+          <Route path="/" element={<HomePage/>}/>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/:lavelOne/:lavelTwo/:lavelThre" element={<Product/>}></Route>
           <Route path="/product/:productId" element={<ProductDetails/>}></Route>

@@ -1,20 +1,6 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
-*/
 "use client";
 import { navigation } from "./navigation";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -46,7 +32,7 @@ export default function Navigation() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const jwt = localStorage.getItem("jwt");
+  const jwt = useMemo(() => localStorage.getItem("jwt"), []);
   const { auth } = useSelector((store) => store);
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const dispatch = useDispatch();
@@ -54,13 +40,23 @@ export default function Navigation() {
   const openUserMenu = Boolean(anchorEl);
   const [openCategory, setOpenCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const requestMade = useRef(false);
+  // Fetch user data once when the component mounts if jwt is available
   useEffect(() => {
-    if (jwt) {
-      dispatch(getUser(jwt));
-    }
-  }, [jwt, auth.jwt, dispatch]);
+    const fetchUser = async () => {
+      if (jwt && !auth.user && !requestMade.current) {
+        requestMade.current = true;
+        try {
+          await dispatch(getUser(jwt));
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        }
+      }
+    };
 
+    fetchUser();
+  }, [dispatch, jwt]);
+  // Redirect user after successful login
   useEffect(() => {
     if (auth.user) {
       setOpenAuthModal(false);
@@ -76,22 +72,24 @@ export default function Navigation() {
   const handleClose = () => {
     setOpenAuthModal(false);
   };
-  
 
   const handleOpen = () => {
     setOpenAuthModal(true);
     navigate("/login");
   };
 
-  const handleMyOrderClick = () => {
-    navigate("/account/order");
-  };
+  // const handleMyOrderClick = () => {
+  //   navigate("/account/order");
+  // };
+
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
   };
+
   const handleCategoryClick = (category, section, item) => {
     navigate(`/${category.id}/${section.id}/${item.id}`);
     setOpen(false);
@@ -117,7 +115,6 @@ export default function Navigation() {
     e.preventDefault();
     console.log("Searching for:", searchQuery);
   };
-
   return (
     <div className="fixed w-full top-0 bg-white z-50 border-b border-gray-200">
       {/* Mobile menu */}

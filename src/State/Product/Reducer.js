@@ -12,6 +12,8 @@ const initialState = {
   product: null,
   loading: false,
   error: null,
+  totalItems: 0,
+  currentPage: 0,
 };
 
 export const customerProductReducer = (state = initialState, action) => {
@@ -25,7 +27,9 @@ export const customerProductReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: null,
-        products: action.payload,
+        products: action.payload.products,
+        totalItems: action.payload.totalItems,
+        currentPage: action.payload.currentPage,
       };
 
     case FIND_PRODUCT_BY_ID_SUCCESS:

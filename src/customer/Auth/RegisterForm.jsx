@@ -42,9 +42,7 @@ export const RegisterForm = () => {
       setPasswordError("Passwords do not match");
       return;
     }
-    
     setPasswordError("");
-
     const userData = {
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
@@ -52,8 +50,8 @@ export const RegisterForm = () => {
       mobile: data.get("phone"),
       password: password,
     };
-
     dispatch(register(userData));
+    handleClose();
   };
 
   const handleNavigateToLogin = () => {

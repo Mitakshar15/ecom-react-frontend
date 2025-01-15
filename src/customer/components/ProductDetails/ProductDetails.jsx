@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { Box, Button, Grid, LinearProgress, Rating, TextField, Pagination } from "@mui/material";
@@ -120,7 +120,7 @@ export default function ProductDetails() {
   const reviewsPerPage = 6;
 
   const handleAddToCart = () => {
-    const data = {productId:params.productId,size:selectedSize.name}
+    const data = {productId:params.productId,size:selectedSize.name,quantity:1}
     console.log("DATA",data)
    dispatch(addItemToCart(data))
 
@@ -185,17 +185,56 @@ export default function ProductDetails() {
     });
   };
 
- useEffect(()=>{
-  calculateAvgRating();
- });
-
-
- 
-  useEffect(()=>{
-    const data ={productId:params.productId}
-  dispatch(findProductById(data))  
+    // ... other state declarations ...
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const isInitialMount = useRef(true);
+    const productFetchedRef = useRef(false);
   
-  },[params.productId,dispatch])
+    // Combine all data fetching into a single useEffect
+    useEffect(() => {
+      // Skip effect on initial mount
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
+        return;
+      }
+  
+      // Skip if product is already fetched
+      if (productFetchedRef.current) {
+        return;
+      }
+  
+      const fetchProductData = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          productFetchedRef.current = true;
+          
+          await dispatch(findProductById({ productId: params.productId }));
+          
+          // Calculate average rating after product is fetched
+          let sum = 0;
+          if (products?.product?.ratings) {
+            sum = products.product.ratings.reduce((acc, curr) => acc + curr.rating, 0);
+            setAvgRating(sum / products.product.ratings.length);
+          } else {
+            setAvgRating(0);
+          }
+        } catch (err) {
+          setError(err.message);
+          productFetchedRef.current = false;
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchProductData();
+  
+      // Cleanup function
+      return () => {
+        productFetchedRef.current = false;
+      };
+    }, [params.productId]);
 
   const ratingStats = calculateRatingPercentages(products?.product?.ratings);
 

@@ -1,44 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import CartItem from "./CartItem";
-import { Button, Divider } from "@mui/material";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { get, removeCartItem } from "../../../State/Cart/Action";
-import { getUser } from "../../../State/Auth/Action";
 
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {cart} = useSelector(store=>store);
-  const {auth} = useSelector(store=>store);
-  const sortedCartItems = cart.cart?.cartItems?.slice()?.sort((a, b) => {
-    return a.id - b.id;
-  });
+  const { cart } = useSelector(store => store);
+  const isFirstRender = useRef(true);
+
+  const sortedCartItems = React.useMemo(() => {
+    return cart.cart?.cartItems?.slice()?.sort((a, b) => a.id - b.id);
+  }, [cart.cart?.cartItems]);
+
+  // Modified initial load effect
+  useEffect(() => {
+    // Only run on first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      dispatch(get());
+    }
+  }, []); // Empty dependency array
 
   const handleCheckout = () => {
     navigate("/checkout?step=2");
-  }
+  };
 
-  const handleRemoveCartItem =  (itemId) => {
+  const handleRemoveCartItem = async (itemId) => {
     try {
-       dispatch(removeCartItem(itemId));
-
+      await dispatch(removeCartItem(itemId));
+      dispatch(get());
     } catch (error) {
       console.error("Failed to remove item:", error);
     }
   };
-
-  useEffect(()=>{
-    dispatch(get())
-  
-  },[cart.deleteCartItems])
-
- 
   return (
-
-
-
-    
     <div className="pt-10 mt-[100px]">
       
       

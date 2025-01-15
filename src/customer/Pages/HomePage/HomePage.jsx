@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MainCarousel from '../../components/HomeCarousel/MainCarousel';
 import HomeSectionCarousel from '../../components/HomeSectionCarousel/HomeSectionCarousel';
 import { mens_kurta } from "../../../Data/Mens_kurta";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { findProducts } from '../../../State/Product/Action';
+
 
 
 

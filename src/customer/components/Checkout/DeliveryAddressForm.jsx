@@ -13,7 +13,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { getUserAddress } from "../../../State/Address/Action";
+import { addAddress, getUserAddress } from "../../../State/Address/Action";
 
 
 const DeliveryAddressForm = () => {
@@ -31,7 +31,7 @@ const DeliveryAddressForm = () => {
     state: "",
   });
 
-  const addresses = auth.user?.addresses || [];
+  const addresses = address.data || [];
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showAddressList, setShowAddressList] = useState(true);
 
@@ -50,7 +50,7 @@ const DeliveryAddressForm = () => {
   };
   useEffect(() => {
     dispatch(getUserAddress());
-   }, []);
+   }, [showAddressList]);
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -63,11 +63,12 @@ const DeliveryAddressForm = () => {
       state: data.get('state'),
       zipCode: data.get('zipCode'),
       mobile: data.get('phoneNumber'),
+      userId: auth.user.id,
     };
     
     setDeliveryAddress(newAddress);
     setShowAddressList(false);
-    
+    dispatch(addAddress(newAddress));
     // Here you would typically dispatch an action to save the address to backend
     // dispatch(saveAddress(newAddress));
     
@@ -87,11 +88,11 @@ const DeliveryAddressForm = () => {
       return (
         <div className="p-5">
           <Typography variant="h6" gutterBottom>
-            {address.length > 0 ? "Choose Delivery Address" : "No Saved Addresses"}
+            {address?.data?.length > 0 ? "Choose Delivery Address" : "No Saved Addresses"}
           </Typography>
           
-          {address.length > 0 ? (
-            address.map((addr) => (
+          {address?.data?.length > 0 ? (
+            address?.data?.map((addr) => (
               <div 
                 key={addr.id} 
                 className="border p-3 mb-4 cursor-pointer hover:border-primary"

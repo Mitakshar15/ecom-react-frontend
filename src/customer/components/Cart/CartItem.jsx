@@ -1,27 +1,46 @@
-import React, { useEffect } from "react";
-import {Button, IconButton} from "@mui/material";
+import React, { useState } from "react";
+import { Button, IconButton } from "@mui/material";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { useDispatch, useSelector } from "react-redux";
-import { removeCartItem, updateCartItem, get } from "../../../State/Cart/Action";
-const CartItem = ({item, handleRemoveCartItem}) => {
-const dispatch = useDispatch();
-const {cart} = useSelector(store=>store);
+import { useDispatch } from "react-redux";
+import { updateCartItem } from "../../../State/Cart/Action";
+import { get} from "../../../State/Cart/Action";
+const CartItem = ({ item, handleRemoveCartItem }) => {
+  const dispatch = useDispatch();
+  const [localQuantity, setLocalQuantity] = useState(item.quantity);
+
   const handleRemove = () => {
     handleRemoveCartItem(item.id);
-  }
+  };
 
   const handleUpdateCartItem = async (num) => {
+    const newQuantity = item.quantity + num;
+    
+    if (newQuantity < 1 || newQuantity > item.product.quantity) return;
+    
+    // Update local state immediately for real-time UI update
+    setLocalQuantity(newQuantity);
+
     try {
-      const data = {data:{quantity:item.quantity+num}, cartItemId:item?.id}
+      const data = { 
+        data: { quantity: num }, 
+        cartItemId: item?.id 
+      };
+      // First update the cart item
       await dispatch(updateCartItem(data));
+      // Then fetch the updated cart data
+      await dispatch(get());
     } catch (error) {
+      // Revert local state if API call fails
+      setLocalQuantity(localQuantity);
       console.error("Failed to update quantity:", error);
     }
-  }
-  useEffect(()=>{
-    dispatch(get());
-  },[cart.UpdateCartItems])
+  };
+
+  // Update local quantity when item prop changes
+  React.useEffect(() => {
+    setLocalQuantity(item.quantity);
+  }, [item.quantity]);
 
   return (
     <div className="p-5 shadow-lg border rounded-md">
