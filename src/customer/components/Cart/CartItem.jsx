@@ -4,7 +4,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useDispatch } from "react-redux";
 import { updateCartItem } from "../../../State/Cart/Action";
-import { get, removeCartItem } from "../../../State/Cart/Action";
+import { get} from "../../../State/Cart/Action";
 const CartItem = ({ item, handleRemoveCartItem }) => {
   const dispatch = useDispatch();
   const [localQuantity, setLocalQuantity] = useState(item.quantity);

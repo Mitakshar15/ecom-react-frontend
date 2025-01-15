@@ -50,8 +50,10 @@ export default function Product() {
   const navigate = useNavigate();
   const params  = useParams();
   const dispatch = useDispatch();
-  const {products} = useSelector((store)=>store);
+  const { products} = useSelector((store) => store);
 
+  const  totalItems = products.totalItems;
+  console.log("TOTAL ITEMS:" + totalItems);
   const decodedQueryString = decodeURIComponent(location.search);
   const searchParams = new URLSearchParams(decodedQueryString);
   const colorValue  = searchParams.get("color");
@@ -61,7 +63,7 @@ export default function Product() {
   const sortValue = searchParams.get("sort");
   const pageNumber = searchParams.get("page") || 1;
   const stock = searchParams.get("stock");
-
+  const totalPages = Math.ceil(totalItems / 10); // assuming pageSize is 10
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
 
@@ -113,7 +115,7 @@ export default function Product() {
         minDiscount: discountValue || 0,
         stock: stock || null,
         sort: sortValue || "price_low",
-        pageNumber: pageNumber - 1,
+        pageNumber: pageNumber,
         pageSize: 10,
       };
   
@@ -417,7 +419,7 @@ export default function Product() {
               <div className="lg:col-span-4 w-full">
                 <div className="flex flex-wrap justify-center bg-white py-5 rounded-md">
                   { products && products.products.map((item) => (
-                    <ProductCard product={item} />
+                    <ProductCard key={item.id} product={item} />
                   ))}
                 </div>
               </div>
@@ -427,7 +429,7 @@ export default function Product() {
 <section className="w-full px=[3.6rem]">
   <div className="px-4 py-5 flex justify-center">
     <Pagination 
-      count={products.products?.totalPages} 
+      count={totalPages} 
       color="secondary" 
       onChange={(e, value) => handlePaginationChange(value)} 
     />

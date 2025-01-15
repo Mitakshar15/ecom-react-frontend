@@ -78,9 +78,9 @@ export default function Navigation() {
     navigate("/login");
   };
 
-  const handleMyOrderClick = () => {
-    navigate("/account/order");
-  };
+  // const handleMyOrderClick = () => {
+  //   navigate("/account/order");
+  // };
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
